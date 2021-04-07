@@ -1,0 +1,27 @@
+# https://docs.travis-ci.com/user/languages/r/
+
+language: r
+sudo: false
+cache: packages
+r:
+  - release
+  - devel
+warnings_are_errors: true
+
+repos:
+  CRAN: https://cloud.r-project.org
+
+r_packages:
+  - formatR
+
+r_binary_packages:
+  - rgl
+
+r_github_packages:
+  - baptiste/dielectric
+  - baptiste/RcppFaddeeva
+
+notifications:
+  email:
+    on_success: change
+    on_failure: change

@@ -37,3 +37,6 @@ vignettes/*.pdf
 
 # R Environment Variables
 .Renviron
+rawdata/lebedev/inc*
+rawdata/sphericaldesigns/inc*
+rawdata/sphericaldesigns/SF29-Nov-2012/

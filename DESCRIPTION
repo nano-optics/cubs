@@ -1,0 +1,20 @@
+Package: cubs
+Version: 0.0.1
+Authors@R: person("Baptiste", "Auguie",
+    email = "baptiste.auguie@vuw.ac.nz",
+    role = c("aut", "cre"), comment = c("ORCID"="0000-0002-2749-5715"))
+License: GPL-3
+Title: Cubature on the 2-sphere
+Description: Cubature methods for angular averaging.
+URL: https://github.com/nano-optics/cubs
+Type: Package
+LazyLoad: yes
+VignetteBuilder: knitr
+Suggests:
+    ggplot2,
+    testthat,
+    knitr,
+    rmarkdown
+Imports:
+    statmod,
+    randtoolbox
