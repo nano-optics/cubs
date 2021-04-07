@@ -55,9 +55,9 @@ cubs <- function(N = 30,
     nodes <- expand.grid(alpha=alpha, beta=beta)
     # corresponding weights for 2D cubature
     weights <- expand.grid(alpha=rep(1/Nalpha, Nalpha),
-                           beta=GL_beta$weights)
-    # combine the weights
-    weights <- weights$alpha * weights$beta
+                           beta=GL_cbeta$weights)
+    # combine the weights and divide by 2 (divide by 4pi but multiply by 2pi)
+    weights <- 1/2 * weights$alpha * weights$beta
     
     return(cbind(as.matrix(nodes), weights))
   }

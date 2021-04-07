@@ -52,11 +52,14 @@ test_quadrature <- function(quad){
   vals3 <- f3(quad[,1], quad[,2])
   
   d <- data.frame(N = nrow(quad),
-                  err1 = sum(vals1 * quad[,3]) - I1/(4*pi),
-                  err2 = sum(vals2 * quad[,3]) - I2/(4*pi),
-                  err3 = sum(vals3 * quad[,3]) - I3/(4*pi))
+                  sum1 = sum(vals1 * quad[,3]),
+                  sum2 = sum(vals2 * quad[,3]),
+                  sum3 = sum(vals3 * quad[,3]))
   
-  d
+  mutate(d,
+         err1 = sum1 - I1/(4*pi),
+         err2 = sum2 - I2/(4*pi),
+         err3 = sum3 - I3/(4*pi))
 }
 
 library(purrr)
@@ -64,6 +67,12 @@ data("lebedev")
 data("sphericaldesigns")
 res1 <- map_df(lebedev, test_quadrature)
 res2 <- map_df(sphericaldesigns, test_quadrature)
+
+gausslegendre <- lapply(5:150, cubs, cubature = 'gl')
+res3 <- map_df(gausslegendre, test_quadrature)
+
+
+
 # str(res)
 
 resm1 <- res1 %>% mutate(quad = 'lebedev') %>% 
@@ -72,7 +81,11 @@ resm1 <- res1 %>% mutate(quad = 'lebedev') %>%
 resm2 <- res2 %>% mutate(quad = 'sphericaldesigns') %>% 
   pivot_longer(c('err1','err2','err3'))
 
-resm <- rbind(resm1,resm2)
+resm3 <- res3 %>% mutate(quad = 'gausslegendre') %>% 
+  pivot_longer(c('err1','err2','err3'))
+
+
+resm <- rbind(resm1,resm2,resm3)
 p <- ggplot(subset(resm, N > 1 & N < 250 & !(quad %in% c('grid2','grid','qmc'))),
             aes(N, abs(value),colour=quad)) +
   facet_grid(name~.,scales = 'fixed')+
@@ -84,3 +97,4 @@ p <- ggplot(subset(resm, N > 1 & N < 250 & !(quad %in% c('grid2','grid','qmc')))
   theme()
 
 p
+
