@@ -26,6 +26,6 @@ for (ii in seq_along(lf)){
 names(sphericaldesigns) <- pars$N[pars$N < 1e4]
 pars2 <- data.frame(degree = pars$t[pars$N < 1e4], N=pars$N[pars$N < 1e4])
 
-saveRDS(sphericaldesigns,'sphericaldesigns.rds')
+save(sphericaldesigns,file='sphericaldesigns.rda')
 
-saveRDS(pars2,'sphericaldesigns_table.rds')
+save(pars2,file='sphericaldesigns_table.rda')

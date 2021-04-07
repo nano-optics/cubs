@@ -18,3 +18,4 @@ Suggests:
 Imports:
     statmod,
     randtoolbox
+RoxygenNote: 6.1.1

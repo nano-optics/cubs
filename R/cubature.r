@@ -3,51 +3,78 @@
 ##
 
 
-##' Quadrature points on a sphere
+##' cubature points on a sphere
 ##'
 ##' Numerical integration points for angular averaging
-##' @title quadrature_sphere
+##' @title cubature_sphere
 ##' @param Nq number of integration points
-##' @param quadrature quadrature method, using either Gauss Legendre quadrature (default), Quasi Monte Carlo, regular grid, or "cheap" (3 axes)
+##' @param cubature cubature method, using either Gauss Legendre cubature (default), Quasi Monte Carlo, regular grid, or "cheap" (3 axes)
 ##' @param init (qmc method only) logical: restart, or continue from previous call
 ##' @importFrom randtoolbox halton
 ##' @importFrom statmod gauss.quad
 ##' @export
-##' @family low_level quadrature
+##' @family low_level cubature
 ##' @author baptiste Auguie
-quadrature_sphere <- function(Nq = 30,
-    quadrature = c("qmc", "gl", "cheap", "random", 'grid','grid2', 'fibonacci', 'fibonacci2'),
-    init = TRUE){
-
-  quadrature <- match.arg(quadrature)
-
-  if(quadrature == "cheap"){
-
-    # nodes <- cbind(c(0, pi/2, 0), # along z
-    #                 c(pi/2, 0, 0), # along x
-    #                 c(pi/2, pi/2, 0)) # along y
-
-    nodes <- rbind(alpha = c(0, pi/2, pi/2),
-                        beta  = c(pi/2, 0, pi/2),
-                        gamma = c(0, 0, 0))
-
-    weights <- rep(1/ncol(nodes), ncol(nodes))
-    return(list(nodes=nodes, weights=weights))
+cubs <- function(N = 30,
+                 cubature = c('lebedev', 'sphericaldesigns', "gl", 
+                                'fibonacci', "qmc", 'grid')){
+  
+  cubature <- match.arg(cubature)
+  
+  if(cubature == "lebedev"){
+  # lebedev_table <- readRDS('/Users/auguieba/Documents/nano-optics/cubs/data/lebedev_table.rds')
+    if(N > max(lebedev_table$N)) w <- nrow(lebedev_table) else
+    w <- which(lebedev_table$N >= 36)[1]
+    return(lebedev[[w]])
   }
-
-  if(quadrature == "qmc"){ # quasi monte-carlo
-
+  
+  if(cubature == "sphericaldesigns"){
+    # sphericaldesigns_table <- readRDS('/Users/auguieba/Documents/nano-optics/cubs/data/sphericaldesigns_table.rds')
+    if(N > max(sphericaldesigns_table$N)) w <- nrow(sphericaldesigns_table) else
+      w <- which(sphericaldesigns_table$N >= 36)[1]
+    return(sphericaldesigns[[w]])
+  }
+  
+  
+  if(cubature == "gl"){ #  gauss legendre along cos beta, grid alpha
+    # might have slightly more than N total points
+    # N = 2P^2 -> P = [sqrt(N/2)]
+    # now check +/-1 on each one and pick best combo
+    P <- sqrt(N/2)
+    opts <- expand.grid(N1 = round(P) + seq(-1,1), N2=2*round(P) + seq(-1,1))
+    prod <- opts$N1 * opts$N2
+    best <- which.min(abs(N - prod))
+    Nbeta <- opts$N1[best]
+    Nalpha <- opts$N2[best]
+    
+    alpha <- seq(0, 2*pi *(1 - 1/Nalpha), by = 2*pi/Nalpha)
+    GL_cbeta <- statmod::gauss.quad(Nbeta)
+    beta  = acos(GL_cbeta$nodes)
+    
+    # grid of angles
+    nodes <- expand.grid(alpha=alpha, beta=beta)
+    # corresponding weights for 2D cubature
+    weights <- expand.grid(alpha=rep(1/Nalpha, Nalpha),
+                           beta=GL_beta$weights)
+    # combine the weights
+    weights <- weights$alpha * weights$beta
+    
+    return(cbind(as.matrix(nodes), weights))
+  }
+  
+  if(cubature == "qmc"){ # quasi monte-carlo
+    
     p <- randtoolbox::halton(Nq, dim = 2, normal=FALSE, init=init)
-
+    
     alpha <- p[,1]*2*pi
     beta <- acos(2*p[,2] - 1) # cos(beta) in [-1,1]
     nodes <- rbind(alpha=alpha, beta=beta, gamma=0)
     weights <- rep(1/ncol(nodes), ncol(nodes))
     return(list(nodes=nodes, weights=weights))
   }
-
-  if(quadrature == "random"){ # monte-carlo with random points
-
+  
+  if(cubature == "random"){ # monte-carlo with random points
+    
     alpha <- runif(Nq, 0, 2*pi) # uniform [-pi,pi]
     beta <- acos(runif(Nq, -1, 1)) # cos-uniform [-1,1]
     nodes <- rbind(alpha=alpha, beta=beta, gamma=0)
@@ -55,7 +82,7 @@ quadrature_sphere <- function(Nq = 30,
     return(list(nodes=nodes, weights=weights))
   }
   
-  if(quadrature == "grid"){ # grid in acos beta and alpha
+  if(cubature == "grid"){ # grid in acos beta and alpha
     # might have slightly more than N total points
     # N = 2P^2 -> P = [sqrt(N/2)]
     # now check +/-1 on each one and pick best combo
@@ -76,7 +103,7 @@ quadrature_sphere <- function(Nq = 30,
     
     return(list(nodes=t(nodes), weights=weights))
   }
-  if(quadrature == "grid2"){ # grid in acos beta and alpha
+  if(cubature == "grid2"){ # grid in acos beta and alpha
     # might have slightly more than N total points
     # N = 2P^2 -> P = [sqrt(N/2)]
     # now check +/-1 on each one and pick best combo
@@ -101,7 +128,7 @@ quadrature_sphere <- function(Nq = 30,
   }
   
   
-  if(quadrature == "fibonacci"){ # spiral
+  if(cubature == "fibonacci"){ # spiral
     
     N0 <- Nq
     if(Nq%%2 == 1) N0 <- Nq+1
@@ -118,7 +145,7 @@ quadrature_sphere <- function(Nq = 30,
   }
   
   
-  if(quadrature == "fibonacci2"){ # spiral
+  if(cubature == "fibonacci2"){ # spiral
     
     N0 <- Nq
     if(Nq%%2 == 1) N0 <- Nq+1
@@ -134,39 +161,7 @@ quadrature_sphere <- function(Nq = 30,
     return(list(nodes=nodes, weights=weights))
   }
   
-
-  if(quadrature == "gl"){ #  gauss legendre along cos beta, grid alpha
-    # might have slightly more than N total points
-    # N = 2P^2 -> P = [sqrt(N/2)]
-    # now check +/-1 on each one and pick best combo
-    P <- sqrt(Nq/2)
-    opts <- expand.grid(N1 = round(P) + seq(-1,1), N2=2*round(P) + seq(-1,1))
-    prod <- opts$N1 * opts$N2
-    best <- which.min(abs(Nq - prod))
-    Nbeta <- opts$N1[best]
-    Nalpha <- opts$N2[best]
-
-    # scale the coordinates from (-1, 1) to (0, 2pi)
-    # and cos beta in (-1, 1) resp. (that one unnecessary btw)
-    psi1=-1; psi2=1;
-    C2 = (psi2 - psi1) / 2; D2 = (psi2 + psi1) / 2;
-    
-    GL_alpha <- seq(0, 2*pi *(1 - 1/Nalpha), by = 2*pi/Nalpha)
-    GL_beta <- statmod::gauss.quad(Nbeta)
-
-    alpha = GL_alpha
-    beta  = acos(GL_beta$nodes*C2 + D2)
-
-    # grid of angles, gamma is constant here
-    nodes <- expand.grid(alpha=alpha, beta=beta, gamma=0)
-    # corresponding weights for 1D quadrature
-    weights <- expand.grid(alpha=rep(1/Nalpha, Nalpha),
-                           beta=GL_beta$weights)
-    # combine the weigths
-    weights <- C2 / 2 * weights$alpha * weights$beta
-
-    return(list(nodes=t(as.matrix(nodes)), weights=weights))
-  }
-
-
+  
+  
+  
 }

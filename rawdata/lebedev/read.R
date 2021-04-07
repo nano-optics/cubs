@@ -44,8 +44,8 @@ for(ii in seq_along(ids)){
 }
 names(lebedev) <- orders
 pars <- data.frame(degree = lmax, N=orders)
-saveRDS(lebedev,'lebedev.rds')
-saveRDS(pars,'lebedev_table.rds')
+save(lebedev,file='lebedev.rda')
+save(pars,file='lebedev_table.rda')
 
 # library(cda)
 # 

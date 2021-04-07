@@ -4,39 +4,6 @@ library(ggplot2)
 library(dplyr)
 library(tidyr)
 
-f1 <- function(phi, theta){
-  
-  x <- cos(phi)*sin(theta)
-  y <- sin(phi)*sin(theta)
-  z <- cos(theta)
-  
-  1+x+y^2 +x^2*y+x^4 +y^5 +x^2*y^2*z^2
-}
-
-f2 <- function(phi, theta){
-  
-  x <- cos(phi)*sin(theta)
-  y <- sin(phi)*sin(theta)
-  z <- cos(theta)
-  
-  0.75*exp(-(9*x - 2)^2/4 - (9*y - 2)^2/4 - (9*z - 2)^2/4) +
-    0.75*exp(-(9*x + 1)^2/49 - (9*y + 1)/10 - (9*z + 1)/10) +
-    0.5*exp(-(9*x - 7)^2/4 - (9*y - 3)^2/4 - (9*z - 5)^2/4) -
-    0.2*exp(-(9*x - 4)^2 - (9*y - 7)^2 - (9*z - 5)^2)
-  
-}
-
-
-f3 <- function(phi, theta){
-  
-  x <- cos(phi)*sin(theta)
-  y <- sin(phi)*sin(theta)
-  z <- cos(theta)
-  
-  (1 + tanh(-9*x - 9*y + 9*z)) /9
-}
-
-
 g <- expand.grid(phi=seq(0,2*pi,length=360), theta=seq(0,pi,length=180))
 
 g$f1 <- f1(g$phi,g$theta)
@@ -92,6 +59,9 @@ test_quadrature <- function(quad){
   d
 }
 
+library(purrr)
+data("lebedev")
+data("sphericaldesigns")
 res1 <- map_df(lebedev, test_quadrature)
 res2 <- map_df(sphericaldesigns, test_quadrature)
 # str(res)
@@ -111,7 +81,6 @@ p <- ggplot(subset(resm, N > 1 & N < 250 & !(quad %in% c('grid2','grid','qmc')))
   scale_y_log10() +
   theme() +
   labs(x=expression(N[nodes]),y='abs(error)',colour='')+
-  theme_presentation(base_family = 'Source Sans Pro', base_size = 20)+
   theme()
 
 p
