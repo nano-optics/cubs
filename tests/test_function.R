@@ -49,9 +49,11 @@ f0 <- function(phi, theta){
   yl20m20
   yl19m17 <- Re(exp(17i*phi)*sin(theta)^17*(37*cos(theta)^2 - 1))
   yl19m17
-  #  SphericalHarmonicY[20,10,θ,ϕ] 
+  yl5m2 # ghost
+  
+  #  SphericalHarmonicY[20,10,θ,ϕ] good example
   Re(exp(10i*phi)*sin(theta)^10*(164021*cos(theta)^10 - 189255*cos(theta)^8 + 71610*cos(theta)^6 - 10230*cos(theta)^4 + 465*cos(theta)^2 - 3))
-}
+  }
 
 rotate_x <- function(phi, theta, alpha){
   
@@ -80,31 +82,48 @@ pt2 <- rotate_x(pt$phi, pt$theta, alpha=10*pi/180)
 
 g <- expand.grid(phi=seq(0,2*pi,length=360), theta=seq(0,pi,length=180))
 
-g2 <- rotate_x(g$phi-pi, g$theta, alpha=-30*pi/180)
+g2 <- rotate_x(g$phi-pi, g$theta, alpha=-27.1*pi/180)
 
 g$f0 <- f0(g$phi,g$theta)
-g$f00 <- f0(g2$phi,g2$theta)
+g$f0r <- f0(g2$phi,g2$theta)
 g$f1 <- f1(g$phi,g$theta)
 g$f2 <- f2(g$phi,g$theta)
-g$f3 <- f3(g$phi,g$theta)
+# g$f3 <- f3(g$phi,g$theta)
 
-gm <- g %>% pivot_longer(c('f00','f0','f1','f2','f3')) %>% 
+gm <- g %>% pivot_longer(c('f0r','f0','f1','f2')) %>% 
   group_by(name) %>% 
   mutate(normalised = scales::rescale(value))
 
 str(gm)
 
-p0 <- 
-  ggplot(gm, aes(phi, theta, fill=normalised)) +
-  facet_wrap(~name,ncol=1)+
-  geom_raster() +
-  coord_equal()+
-  theme_minimal()+
-  scale_x_continuous(expand=c(0,0)) +
-  scale_y_continuous(expand=c(0,0)) 
+# gg <- gm %>% filter(name %in% c('f0','f0r')) %>% 
+#   mutate(name = recode(name,f0='Y["5,2"]',f00='Y["5,2"]~rotated'))
 
-p0
+  # ggplot(gg, 
+  #        aes(phi, theta, fill=normalised)) +
+  # facet_grid(~name,labeller = label_parsed)+
+  # geom_raster() +
+  # coord_equal()+
+  # theme_minimal()+ theme(legend.position = 'none')+
+  # scale_x_continuous(expression(phi),expand=c(0,0),breaks=c(0,pi,2*pi),labels=expression(0,pi,2*pi)) +
+  # scale_y_continuous(expression(theta),expand=c(0,0),
+  #                    breaks=c(0,pi/2,pi),labels=expression(0,pi/2,pi))  
 
+# ggsave('ghost.png', width=10,height=3)
+  
+
+p0 <- ggplot(gm,
+       aes(phi, theta, fill=normalised)) +
+facet_wrap(~name,labeller = label_parsed,ncol=1)+
+geom_raster() +
+coord_equal()+
+theme_minimal()+ theme(legend.position = 'none')+
+scale_x_continuous(expression(phi),expand=c(0,0),breaks=c(0,pi,2*pi),labels=expression(0,pi,2*pi)) +
+scale_y_continuous(expression(theta),expand=c(0,0),
+                   breaks=c(0,pi/2,pi),labels=expression(0,pi/2,pi))
+
+
+  
 rg <- ggplot(gm %>% filter(name=='f0'), aes(phi, theta, fill=normalised)) +
   # facet_wrap(~name,ncol=1)+
   geom_raster() +
@@ -114,9 +133,9 @@ rg <- ggplot(gm %>% filter(name=='f0'), aes(phi, theta, fill=normalised)) +
   scale_x_continuous(expand=c(0,0)) +
   scale_y_continuous(expand=c(0,0)) 
 
-ggsave('f0.png',rg, width=6,height=3)
+# ggsave('f0.png',rg, width=6,height=3)
 
-rg <- ggplot(gm %>% filter(name=='f00'), aes(phi, theta, fill=normalised)) +
+rg <- ggplot(gm %>% filter(name=='f0r'), aes(phi, theta, fill=normalised)) +
   # facet_wrap(~name,ncol=1)+
   geom_raster() +
   scale_fill_distiller(palette = 'PiYG') +
@@ -125,35 +144,37 @@ rg <- ggplot(gm %>% filter(name=='f00'), aes(phi, theta, fill=normalised)) +
   scale_x_continuous(expand=c(0,0)) +
   scale_y_continuous(expand=c(0,0)) 
 
-ggsave('f00.png',rg, width=6,height=3)
+# ggsave('f00.png',rg, width=6,height=3)
+# 
+# library(rgl)
+# open3d()
+# texture <- "f0.png"
+# 
+# lat <- matrix(seq(90, -90, len = 50)*pi/180, 50, 50, byrow = TRUE)
+# long <- matrix(seq(-180, 180, len = 50)*pi/180, 50, 50)
+# 
+# r <- 1
+# x <- r*cos(lat)*cos(long)
+# y <- r*cos(lat)*sin(long)
+# z <- r*sin(lat)
+# 
+# 
+# open3d()
+# texture <- "f0.png"
+# texture2 <- "f00.png"
+# 
+# persp3d(x, y, z, col = "white", 
+#         texture = texture, alpha=1,
+#         specular = "black", axes = F, box = F, xlab = "", ylab = "", zlab = "",
+#         normal_x = x, normal_y = y, normal_z = z)
+# 
+# 
+# persp3d(x+2.5*max(x), y, z, col = "white", 
+#         texture = texture2, alpha=1,
+#         specular = "black", axes = F, box = F, xlab = "", ylab = "", zlab = "",
+#         normal_x = x, normal_y = y, normal_z = z, add = TRUE)
+# 
 
-library(rgl)
-open3d()
-texture <- "f0.png"
-
-lat <- matrix(seq(90, -90, len = 50)*pi/180, 50, 50, byrow = TRUE)
-long <- matrix(seq(-180, 180, len = 50)*pi/180, 50, 50)
-
-r <- 1
-x <- r*cos(lat)*cos(long)
-y <- r*cos(lat)*sin(long)
-z <- r*sin(lat)
-
-
-open3d()
-texture <- "f0.png"
-texture2 <- "f00.png"
-
-persp3d(x, y, z, col = "white", 
-        texture = texture, alpha=1,
-        specular = "black", axes = F, box = F, xlab = "", ylab = "", zlab = "",
-        normal_x = x, normal_y = y, normal_z = z)
-
-
-persp3d(x+2*max(x), y, z, col = "white", 
-        texture = texture2, alpha=1,
-        specular = "black", axes = F, box = F, xlab = "", ylab = "", zlab = "",
-        normal_x = x, normal_y = y, normal_z = z, add = TRUE)
 
 library(cubature)
 
@@ -181,75 +202,94 @@ I3
 
 test_quadrature <- function(quad){
   
-  q2 <- rotate_x(quad[,1]-pi, quad[,2], alpha=-30*pi/180)
+  q2 <- rotate_x(quad[,1]-pi, quad[,2], alpha=-27.1*pi/180)
   
   vals0 <- f0(quad[,1], quad[,2])
-  vals00 <- f0(q2[,1], q2[,2])
+  vals0r <- f0(q2[,1], q2[,2])
   vals1 <- f1(quad[,1], quad[,2])
   vals2 <- f2(quad[,1], quad[,2])
-  vals3 <- f3(quad[,1], quad[,2])
+  # vals3 <- f3(quad[,1], quad[,2])
   
   d <- data.frame(N = nrow(quad),
                   sum0 = sum(vals0 * quad[,3]),
-                  sum00 = sum(vals00 * quad[,3]),
+                  sum0r = sum(vals0r * quad[,3]),
                   sum1 = sum(vals1 * quad[,3]),
-                  sum2 = sum(vals2 * quad[,3]),
-                  sum3 = sum(vals3 * quad[,3]))
+                  sum2 = sum(vals2 * quad[,3]))
   
   mutate(d,
-         err00 = sum00 - I0/(4*pi),
+         err0r = sum0r - I0/(4*pi),
          err0 = sum0 - I0/(4*pi),
          err1 = sum1 - I1/(4*pi),
-         err2 = sum2 - I2/(4*pi),
-         err3 = sum3 - I3/(4*pi))
+         err2 = sum2 - I2/(4*pi))
 }
 
 library(purrr)
 data("lebedev")
 data("sphericaldesigns")
 res1 <- map_df(lebedev, test_quadrature)
+resm1 <- res1 %>% mutate(quad = 'lebedev') %>% 
+  pivot_longer(c('err0r','err0','err1','err2'))
+
+
 res2 <- map_df(sphericaldesigns, test_quadrature)
+resm2 <- res2 %>% mutate(quad = 'sphericaldesigns') %>% 
+  pivot_longer(c('err0r','err0','err1','err2'))
 
 gausslegendre <- lapply(c(5:150,seq(200,1e4,by=100)), cubs, cubature = 'gl')
 res3 <- map_df(gausslegendre, test_quadrature)
+resm3 <- res3 %>% mutate(quad = 'gausslegendre') %>% 
+  pivot_longer(c('err0r','err0','err1','err2'))
 
 fibonacci <- lapply(c(5:150,seq(200,1e4,by=100)), 
                     cubs, cubature = 'fibonacci')
 res4 <- map_df(fibonacci, test_quadrature)
+resm4 <- res4 %>% mutate(quad = 'fibonacci') %>% 
+  pivot_longer(c('err0r','err0','err1','err2'))
+
 
 qmc <- lapply(c(5:150,seq(200,1e4,by=100)), cubs, cubature = 'qmc')
-res5 <- map_df(qmc, test_quadrature)
+res6 <- map_df(qmc, test_quadrature)
+resm6 <- res6 %>% mutate(quad = 'qmc') %>% 
+  pivot_longer(c('err0r','err0','err1','err2'))
+
+
+random <- lapply(c(5:150,seq(200,1e4,by=100)), cubs, cubature = 'random')
+res7 <- map_df(random, test_quadrature)
+resm7 <- res7 %>% mutate(quad = 'random') %>% 
+  pivot_longer(c('err0r','err0','err1','err2'))
+
+grid <- lapply(c(5:150,seq(200,1e4,by=100)), cubs, cubature = 'grid')
+res8 <- map_df(grid, test_quadrature)
+resm8 <- res8 %>% mutate(quad = 'grid') %>% 
+  pivot_longer(c('err0r','err0','err1','err2'))
+
+# 
+# naive <- lapply(c(5:150,seq(200,1e4,by=100)), cubs, cubature = 'naive')
+# res9 <- map_df(naive, test_quadrature)
+# resm9 <- res9 %>% mutate(quad = 'naive') %>% 
+#   pivot_longer(c('err00','err0','err1','err2','err3'))
 
 
 # str(res)
 
-resm1 <- res1 %>% mutate(quad = 'lebedev') %>% 
-  pivot_longer(c('err00','err0','err1','err2','err3'))
 
-resm2 <- res2 %>% mutate(quad = 'sphericaldesigns') %>% 
-  pivot_longer(c('err00','err0','err1','err2','err3'))
-
-resm3 <- res3 %>% mutate(quad = 'gausslegendre') %>% 
-  pivot_longer(c('err00','err0','err1','err2','err3'))
-
-resm4 <- res4 %>% mutate(quad = 'fibonacci') %>% 
-  pivot_longer(c('err00','err0','err1','err2','err3'))
-
-resm5 <- res5 %>% mutate(quad = 'qmc') %>% 
-  pivot_longer(c('err00','err0','err1','err2','err3'))
-
-resm <- rbind(resm1,resm2,resm3,resm4,resm5) 
+resm <- rbind(resm1,resm2,resm3,resm4,resm6,resm7,resm8) 
 resm$value[abs(resm$value)<1e-16] <- 1e-16
 
-p <- ggplot(subset(resm, N > 1 & N < 25000 & !(quad %in% c('grid2','grid'))),
-            aes(N, abs(value),colour=quad)) +
+p <- ggplot(subset(resm, N > 1 & N < 5e4 & !(quad %in% c('lebedev2','gausslegendre2','sphericaldesigns2','random2'))),
+aes(N, abs(value),colour=quad)) +
+  # 
+  # p <- ggplot(subset(resm, N > 1 & N < 100 & (quad %in% c('fibonacci','fibonacci2'))),
+  #             aes(N, abs(value),colour=quad)) +
   facet_wrap(~name,scales = 'free_y',ncol=1)+
   geom_line() +
   scale_x_log10() +
-  scale_y_log10(lim=10^c(-16,0)) +
+  scale_y_log10() +
   theme() +
+  scale_colour_brewer(palette = 'Set1')+
   labs(x=expression(N[nodes]),y='abs(error)',colour='')+
   theme()
 
+# p 
 egg::ggarrange(p0+coord_cartesian()+theme(legend.position = 'none'),p,ncol=2)
 

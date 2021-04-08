@@ -4,13 +4,16 @@
 \alias{cubs}
 \title{cubature_sphere}
 \usage{
-cubs(N = 30, cubature = c("lebedev", "sphericaldesigns", "gl",
-  "fibonacci", "qmc", "grid"))
+cubs(
+  N = 30,
+  cubature = c("lebedev", "sphericaldesigns", "gl", "fibonacci", "grid", "qmc",
+    "random")
+)
 }
 \arguments{
-\item{cubature}{cubature method, using either Gauss Legendre cubature (default), Quasi Monte Carlo, regular grid, or "cheap" (3 axes)}
+\item{N}{number of integration points}
 
-\item{Nq}{number of integration points}
+\item{cubature}{cubature method, using either Gauss Legendre cubature (default), Quasi Monte Carlo, regular grid, or "cheap" (3 axes)}
 
 \item{init}{(qmc method only) logical: restart, or continue from previous call}
 }

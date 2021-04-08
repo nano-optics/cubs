@@ -17,7 +17,7 @@
 ##' @author baptiste Auguie
 cubs <- function(N = 30,
                  cubature = c('lebedev', 'sphericaldesigns', "gl", 
-                                'fibonacci', "qmc", 'grid')){
+                                'fibonacci', 'grid', "qmc", "random")){
   
   cubature <- match.arg(cubature)
   
@@ -35,15 +35,9 @@ cubs <- function(N = 30,
   
   
   if(cubature == "gl"){ #  gauss legendre along cos beta, grid alpha
-    # might have slightly more than N total points
+    # may have a few more than N total points
     # N = (P+1)*(P+1)/2 = (P+1)^2/2 -> P = [sqrt(2*N) - 1]
     P <- sqrt(2*N) - 1
-    # now check +/-1 on each one and pick best combo
-    # opts <- expand.grid(N1 = round(P) + seq(-1,1), N2=2*round(P) + seq(-1,1))
-    # prod <- opts$N1 * opts$N2
-    # best <- which.min(abs(N - prod))
-    # Nbeta <- opts$N1[best]
-    # Nalpha <- opts$N2[best]
     Nalpha <- ceiling(P+1)
     Nbeta <- ceiling((P+1)/2)
     
@@ -84,60 +78,41 @@ cubs <- function(N = 30,
   }
   
   if(cubature == "grid"){ # grid in acos beta and alpha
-    # might have slightly more than N total points
-    # N = 2P^2 -> P = [sqrt(N/2)]
-    # now check +/-1 on each one and pick best combo
-    P <- sqrt(N/2)
-    opts <- expand.grid(N1 = round(P) + seq(-1,1), 
-                        N2=2*round(P) + seq(-1,1))
-    prod <- opts$N1 * opts$N2
-    best <- which.min(abs(N - prod)) 
-    Nbeta <- opts$N1[best]
-    Nalpha <- opts$N2[best]
+    # may have a few more than N total points
+    # N = (P+1)*(P+1)/2 = (P+1)^2/2 -> P = [sqrt(2*N) - 1]
+    P <- sqrt(2*N) - 1
+    Nalpha <- ceiling(P+1)
+    Nbeta <- ceiling((P+1)/2) 
     
     alpha <- seq(0, 2*pi *(1 - 1/Nalpha), by = 2*pi/Nalpha)
-    beta <- acos(seq(-1+1/(2*Nbeta+1), 1-1/(2*Nbeta+1), 
-                     length.out = Nbeta)) 
+    beta <- acos(seq(-1, 1, length.out = Nbeta)) 
     # cos-uniform ]-1,1[ exclude poles as otherwise many points there
-    # nodes <- rbind(expand.grid(alpha=alpha, beta=beta, gamma=0),
-    #                c(0,0,0), c(0, pi, 0)) # add two poles
-    nodes <- expand.grid(alpha=alpha, beta=beta)
-    weights <- rep(1/nrow(nodes), nrow(nodes))
+    nodes <- expand.grid(alpha=alpha, beta=beta[-c(1,Nbeta)])
+    weights <- rep(1/(Nalpha*Nbeta), nrow(nodes))
+    nodes <- rbind(nodes,
+                   c(0,0,0), 
+                   c(0, pi, 0)) # add two poles
+    weights <- c(weights, 1/(Nbeta),1/(Nbeta))
     
     return(cbind(as.matrix(nodes), weights))
   }
-
   
-  if(cubature == "fibonacci"){ # spiral
-    
+  
+  if(cubature == "fibonacci"){ # improved spiral
+    # R. Marques et al. 1981 
+    # Spherical Fibonacci Point Sets for Illumination Integrals
+    # tj = arccos(1-(2j+1)/N)
+    # pj = 2jpi phi-1
     N0 <- N
-    if(N%%2 == 1) N0 <- N+1
-    P <- (N0-1)/2
-    ii <- seq(-P,P,by=1)
-    # asin(2*ii/N0) latitude = asin(x) -> colatitude = pi/2 - asin(x)
-    beta <- pi/2 - asin(2*ii/N0)
+    if(N%%2 == 1) N <- N0+1
+    jj <- seq(0,N-1)
+    
+    beta <- acos(1 - (2*jj+1)/N)
     golden <- (1+sqrt(5))/2
-    alpha <- (2*pi*ii/golden) %% (2*pi)
+    alpha <- (2*pi*jj/golden) %% (2*pi)
     
     nodes <- cbind(alpha=alpha, beta=beta)
     weights <- rep(1/nrow(nodes), nrow(nodes))
-    return(cbind(as.matrix(nodes), weights))
-  }
-  
-  
-  if(cubature == "fibonacci2"){ # spiral
-    
-    N0 <- N
-    if(N%%2 == 1) N0 <- N+1
-    
-    ii <- seq(0,N0,by=1)
-    
-    beta <- acos(1 - (2*ii+1)/N0)
-    golden <- (1+sqrt(5))/2
-    alpha <- (2*pi*ii/golden) %% (2*pi)
-    
-    nodes <- rbind(alpha=alpha, beta=beta)
-    weights <- rep(1/ncol(nodes), ncol(nodes))
     return(cbind(as.matrix(nodes), weights))
   }
   
