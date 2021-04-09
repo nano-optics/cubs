@@ -1,71 +1,20 @@
+gammalm <- function(l, m){
+  sqrt((2*l+1)/(4*pi) * factorial(l-m) / factorial(l+m))
+}
 
-##' @importFrom polynom as.polylist
+##' @importFrom Ryacas yac_expr
+##' @importFrom glue glue
 ##' @export
-md <- function(.p, m=2){
-  
-  pl.list <- as.polylist(.p)
-  if(m == 1) return(pl.list)
-  for(n in seq(1, m-1)){
-    pl.list[[n+1]] <- deriv(pl.list[[n]])
-  }
-  
-  (pl.list)
-}
-#  
-# md(Pl[[1]], 1)
-# 
-# md(Pl[[3]], 2)
-# md(Pl[[4]], 4)
-
-
-Nm <- function(l, phi){
-  t.m <- seq(0, l)
-  matrix( sqrt((2*l+1) / (4*pi) * factorial(l-t.m) / factorial(l+t.m)), ncol = l+1, nrow = length(phi), byrow=T)
+Plm <- function(l,m, theta){
+  ex <- Ryacas::yac_expr(glue::glue("(-1)^{m}*(1-x^2)^({m}/2)*D(x,{m})OrthoP({l}, x)"))
+  eval(ex, list(x = cos(theta)))
 }
 
-
-Expm <- function(l, phi){
-  t.m <- seq(0, l)
-  sapply(t.m, function(.m) exp(1i* .m*phi))
-}
-# l <- 3
-# ee <- Expm(l, phi)
-
-
-##' @importFrom orthopolynom legendre.polynomials
 ##' @export
-Ylm <- function(l, theta = seq(0, pi, length=10), phi=seq(0, 2*pi, length=10)){
-  # require(orthopolynom)
-  # require(lattice)
-  # require(grid)
+Ylm <- function(l,m,phi,theta){
   
-  # 0 < theta < pi : polar angle
-  # 0 < phi < 2 pi : azimuth angle
-  # l <- 3
-  # cannot index from 0
+  gammalm(l,m) * exp(1i*m*phi) * Plm(l,m, theta)
   
-  Pl <- as.polylist(legendre.polynomials(l))
-  
-  Plm <- lapply(seq_along(Pl), function(ind) md(Pl[[ind]], ind))
-  
-  Plm.theta <- lapply(seq_along(Plm), function(ind) { # l
-    ll <- ind - 1 
-    sapply(seq_along(Plm[[ind]]), function(ind2) {
-      mm <- ind2 - 1
-      (-1)^mm *(1-cos(theta)^2)^(mm/2) * as.function(Plm[[ind]][[ind2]])( cos(theta)) 
-    })
-  })
-  
-  
-  
-  Nlm <- lapply(seq_along(Plm.theta)-1, Nm, phi=phi) 
-  
-  explm <- lapply(seq_along(Plm.theta)-1, Expm, phi=phi) 
-  
-  
-  Ylm <- lapply(seq_along(Plm.theta), function(.l)  Nlm[[.l]] * Plm.theta[[.l]] * explm[[.l]] ) 
-  Ylm
 }
 
 
-# Ylm(1)
