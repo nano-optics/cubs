@@ -5,7 +5,7 @@ library(dplyr)
 library(tidyr)
 
 
-f0 <- function(phi, theta){
+f0_manual <- function(phi, theta){
   
   # https://math.stackexchange.com/a/1847806/4964
   

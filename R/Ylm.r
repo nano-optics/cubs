@@ -13,7 +13,8 @@ Plm <- function(l,m, theta){
 ##' @export
 Ylm <- function(l,m,phi,theta){
   
-  gammalm(l,m) * exp(1i*m*phi) * Plm(l,m, theta)
+  pos <- gammalm(l,abs(m)) * exp(1i*abs(m)*phi) * Plm(l,abs(m), theta)
+  if(m<0) return((-1)^m*Conj(pos)) else return(pos)
   
 }
 
