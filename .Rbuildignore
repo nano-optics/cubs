@@ -20,3 +20,6 @@ _pkgdown.yml
 README.Rmd
 ^\.github$
 rawdata/
+^_pkgdown\.yml$
+^docs$
+^pkgdown$

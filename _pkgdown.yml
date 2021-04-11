@@ -3,19 +3,14 @@ templates:
     bootswatch: lumen
 
 reference:
-  - title: alpha
-    desc:  Polarisability
+  - title: Ylm
+    desc:  Spherical harmonics
     contents:
-    - starts_with("alpha_")
+    - starts_with("ylm_")
     - init_site
-  - title: cluster
-    desc:  Cluster
+  - title: cubature
+    desc:  Cubature methods
     contents:
-    - starts_with("cluster_")
-    - init_site
-  - title: spectrum
-    desc:  Spectrum
-    contents:
-    - starts_with("spectrum_")
+    - starts_with("cubature_")
     - init_site
     

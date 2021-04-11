@@ -1,3 +1,5 @@
+
+##' @export
 gammalm <- function(l, m){
   sqrt((2*l+1)/(4*pi) * factorial(l-m) / factorial(l+m))
 }

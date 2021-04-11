@@ -9,7 +9,7 @@
 #'   \item{theta}{}
 #'   \item{weight}{}
 #' }
-#' @source \url{}
+#' @source \url{https://web.maths.unsw.edu.au/~rsw/Sphere/EffSphDes/}
 "sphericaldesigns"
 
 
@@ -25,6 +25,6 @@
 #'   \item{theta}{}
 #'   \item{weight}{}
 #' }
-#' @source \url{}
+#' @source \url{https://people.sc.fsu.edu/~jburkardt/c_src/sphere_lebedev_rule/sphere_lebedev_rule.html}
 "lebedev"
 
