@@ -5,7 +5,7 @@ library(dplyr)
 library(tidyr)
 
 
-f0_manual <- function(phi, theta){
+f0 <- function(phi, theta){
   
   # https://math.stackexchange.com/a/1847806/4964
   
@@ -196,8 +196,23 @@ num$integral
 I2
 
 num <- hcubature(function(x) sin(x[2]) * f3(x[1],x[2]) , c(0,0), c(2*pi, pi))
+num$functionEvaluations
+num$error
 num$integral
 I3
+
+
+library(SphericalCubature)
+
+S <- mvmesh::UnitSphere(n=3,  method="edgewise")
+# S <- Orthants( n=3 )
+f_wrap <- function(x,.f=f3){p <- cart2sph(x[1], x[2], x[3]);  .f(p[1],pi/2-p[2])}
+res <- adaptIntegrateSphereTri(f_wrap,3, S$S, partitionInfo=F )
+str(res)
+I3
+# sphereArea(n)/n
+plot(S)
+plot(res$subsimplices)
 
 
 test_quadrature <- function(quad){
