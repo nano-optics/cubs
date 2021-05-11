@@ -22,12 +22,14 @@ cubs <- function(N = 30,
   cubature <- match.arg(cubature)
   
   if(cubature == "lebedev"){
+    data(lebedev_table)
     if(N > max(lebedev_table$N)) w <- nrow(lebedev_table) else
     w <- which(lebedev_table$N >= 36)[1]
     return(lebedev[[w]])
   }
   
   if(cubature == "sphericaldesigns"){
+    data(sphericaldesigns_table)
     if(N > max(sphericaldesigns_table$N)) w <- nrow(sphericaldesigns_table) else
       w <- which(sphericaldesigns_table$N >= 36)[1]
     return(sphericaldesigns[[w]])

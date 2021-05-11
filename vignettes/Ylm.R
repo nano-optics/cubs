@@ -7,7 +7,6 @@ library(purrr)
 library(glue)
 
 ## ----createleg, message=FALSE, echo=TRUE--------------------------------------
-g <- expand.grid(phi=seq(0,2*pi,length=360), theta=seq(0,pi,length=180))
 
 pars <- rowwise(data.frame(l=0:5)) %>% mutate(m = list(seq(0, l))) %>% unnest(cols = c(m))
 
@@ -18,6 +17,10 @@ ggplot(leg, aes(theta, value, colour=factor(m))) +
   geom_line()
 
 ## ----createsh, message=FALSE, echo=TRUE---------------------------------------
+g <- expand.grid(phi=seq(0,2*pi,length=360), theta=seq(0,pi,length=180))
+
+pars <- rowwise(data.frame(l=0:5)) %>% mutate(m = list(seq(-l, l))) %>% unnest(cols = c(m))
+
 test <- rowwise(pars) %>% mutate(Y = list(Ylm(l,m,g$phi,g$theta)), 
                                  data=list(data.frame(Yn=Re(Y)/max(Re(Y)), g)))
 
@@ -46,6 +49,9 @@ all <- rowwise(test) %>% pmap(plot_ylm)
 lmax = max(pars$l)
 pmax = 2*(lmax)+1
 m <- matrix(NA,lmax+1,pmax)
+# (row(m) > (lmax - col(m) + 1))
+# (row(m) > (col(m) - lmax -1))
+# hm <- (row(m) > (lmax - col(m) + 1)) & (row(m) > (col(m) - lmax -1))
 ind <- which((row(m) > (lmax - col(m) + 1)) & (row(m) > (col(m) - lmax -1)), arr.ind = TRUE)
 ind <- ind[order(ind[,1],ind[,2]),]
 m[ind] <- seq(1,nrow(ind))
