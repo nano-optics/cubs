@@ -34,12 +34,12 @@ I3 <- 4*pi/9
 # num$integral
 
 
-test_cubature <- function(cub, l, m, alpha=-27.1*pi/180){
+test_cubature <- function(cub, l, m, alpha=-27.1*pi/180, ...){
   
   cub2 <- rotate_x(cub[,1]-pi, cub[,2], alpha=alpha)
   
-  vals1 <- Re(cubs::Ylm(l, m, cub[,1], cub[,2])$Y)
-  vals2 <- Re(cubs::Ylm(l, m, cub2[,1], cub2[,2])$Y)
+  vals1 <- Re(cubs::Ylm(l, m, cub[,1], cub[,2]))
+  vals2 <- Re(cubs::Ylm(l, m, cub2[,1], cub2[,2]))
   
   d <- data.frame(N = nrow(cub),
                   sum1 = sum(vals1 * cub[,3]),
@@ -54,9 +54,9 @@ data("lebedev")
 data("sphericaldesigns")
 
 
-l1 <- map_df(lebedev, function(.c) tibble(name = 'lebedev', N = nrow(.c), cub = list(.c)))
+l1 <- map_df(lebedev[1:20], function(.c) tibble(name = 'lebedev', N = nrow(.c), cub = list(.c)))
 
-l2 <- map_df(sphericaldesigns, function(.c) tibble(name = 'sphericaldesigns', N = nrow(.c), cub = list(.c)))
+l2 <- map_df(sphericaldesigns[1:30], function(.c) tibble(name = 'sphericaldesigns', N = nrow(.c), cub = list(.c)))
 str(l2)
 
 wrap_cub <- function(N,cubature) {
@@ -64,7 +64,7 @@ wrap_cub <- function(N,cubature) {
   tibble(name=cubature,N=nrow(.c),cub=list(.c))
 } 
 
-l3 <- pmap_df(cross_df(list(N = c(10:150,seq(200,2e3,by=100)),  
+l3 <- pmap_df(cross_df(list(N = c(seq(10,100,by=5),seq(500,2e3,by=500)),  
                        cubature = c('gl','fibonacci','qmc','random','grid'))), wrap_cub)
 dim(l3)
 l3 <- l3 %>% distinct()
@@ -76,17 +76,26 @@ lc <- rbind(l1,l2,l3)
 str(lc)
 
 
+pars <- rowwise(data.frame(l=c(10,15,20))) %>% 
+  mutate(m = list(seq(0, l))) %>% 
+  unnest(cols = c(m))
+
+
+# test_cubature(lc$cub[[1]], 1,1)
+# map_df(lc$cub, ~test_cubature(.,1,1))
+test <- rowwise(pars) %>% mutate(res = list(map2_df(lc$cub,lc$name, ~cbind(test_cubature(.x,l,m),quad=.y))))
+
+resm <- test %>% unnest(cols=c(res)) %>% pivot_longer(cols=c(err1,err2))
+str(resm)
+
 resm$value[abs(resm$value)<1e-16] <- 1e-16
 
-p <- ggplot(subset(resm, N > 1 & N < 5e4 & !(quad %in% c('lebedev2','gausslegendre2','sphericaldesigns2','random2'))),
-            aes(N, abs(value),colour=quad)) +
-  # 
-  # p <- ggplot(subset(resm, N > 1 & N < 100 & (quad %in% c('fibonacci','fibonacci2'))),
-  #             aes(N, abs(value),colour=quad)) +
-  facet_wrap(~name,scales = 'free_y',ncol=1)+
+p <- ggplot(subset(resm, N > 1 & N < 5e4 & l>0 &name=='err1' & !(quad %in% c('lebedev2','gausslegendre2','sphericaldesigns2','random2'))),
+            aes(N, abs(value),colour=factor(m))) +
+  facet_grid(quad~l,scales = 'free_y')+
   geom_line() +
   scale_x_log10() +
-  scale_y_log10() +
+  scale_y_log10(lim=10^c(-16,-1)) +
   theme() +
   scale_colour_brewer(palette = 'Set1')+
   labs(x=expression(N[nodes]),y='abs(error)',colour='')+
