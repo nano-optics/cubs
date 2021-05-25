@@ -17,5 +17,6 @@ Suggests:
     rmarkdown
 Imports:
     statmod,
-    randtoolbox
+    randtoolbox,
+    Ryacas
 RoxygenNote: 7.1.1
