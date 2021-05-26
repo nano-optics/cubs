@@ -8,6 +8,7 @@ Title: Cubature on the 2-sphere
 Description: Cubature methods for angular averaging.
 URL: https://github.com/nano-optics/cubs
 Type: Package
+LazyData: true
 LazyLoad: yes
 VignetteBuilder: knitr
 Suggests:
