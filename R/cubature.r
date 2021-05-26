@@ -23,15 +23,16 @@ cubs <- function(N = 30,
   
   if(cubature == "lebedev"){
     data(lebedev_table)
+    data(lebedev)
     if(N > max(lebedev_table$N)) w <- nrow(lebedev_table) else
-    w <- which(lebedev_table$N >= 36)[1]
+    w <- min(which(lebedev_table$N >= N))
     return(lebedev[[w]])
   }
   
   if(cubature == "sphericaldesigns"){
     data(sphericaldesigns_table)
     if(N > max(sphericaldesigns_table$N)) w <- nrow(sphericaldesigns_table) else
-      w <- which(sphericaldesigns_table$N >= 36)[1]
+      w <- min(which(sphericaldesigns_table$N >= N))
     return(sphericaldesigns[[w]])
   }
   
