@@ -57,3 +57,42 @@
 #' @source \url{https://people.sc.fsu.edu/~jburkardt/c_src/sphere_lebedev_rule/sphere_lebedev_rule.html}
 "sphericaldesigns_table"
 
+#' gl_table
+#'
+#' valid numbers
+#' 
+#' @docType data
+#' @format vector
+"gl_table"
+
+#' grid_table
+#'
+#' valid numbers
+#' 
+#' @docType data
+#' @format vector
+"grid_table"
+
+#' qmc_table
+#'
+#' valid numbers
+#' 
+#' @docType data
+#' @format vector
+"qmc_table"
+
+#' random_table
+#'
+#' valid numbers
+#' 
+#' @docType data
+#' @format vector
+"random_table"
+
+#' fibonacci_table
+#'
+#' valid numbers
+#' 
+#' @docType data
+#' @format vector
+"fibonacci_table"

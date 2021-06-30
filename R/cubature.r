@@ -23,7 +23,6 @@ cubs <- function(N = 30,
   
   if(cubature == "lebedev"){
     data(lebedev_table)
-    data(lebedev)
     if(N > max(lebedev_table$N)) w <- nrow(lebedev_table) else
     w <- min(which(lebedev_table$N >= N))
     return(lebedev[[w]])
@@ -38,20 +37,22 @@ cubs <- function(N = 30,
   
   
   if(cubature == "gl"){ #  gauss legendre along cos beta, grid alpha
-    # may have a few more than N total points
-    # N = (P+1)*(P+1)/2 = (P+1)^2/2 -> P = [sqrt(2*N) - 1]
-    P <- sqrt(2*N) - 1
-    Nalpha <- ceiling(P+1)
-    Nbeta <- ceiling((P+1)/2)
     
-    alpha <- seq(0, 2*pi *(1 - 1/Nalpha), by = 2*pi/Nalpha)
-    GL_cbeta <- statmod::gauss.quad(Nbeta)
-    beta  = acos(GL_cbeta$nodes)
+    if(N > max(gl_table)) N <- max(gl_table) else
+      N <- gl_table[min(which(gl_table >= N))]
+    
+    # N=2Nb^2
+    Nb <- as.integer(sqrt(N/2))
+    Na <- 2*Nb
+    
+    alpha <- seq(0, 2*pi *(1 - 1/Na), by = 2*pi/Na)
+    GL_cbeta <- statmod::gauss.quad(Nb)
+    beta = acos(GL_cbeta$nodes)
     
     # grid of angles
     nodes <- expand.grid(alpha=alpha, beta=beta)
     # corresponding weights for 2D cubature
-    weights <- expand.grid(alpha=rep(1/Nalpha, Nalpha),
+    weights <- expand.grid(alpha=rep(1/Na, Na),
                            beta=GL_cbeta$weights)
     # combine the weights and divide by 2 
     # (1/4pi for the average, but * 2pi from range of alpha)
@@ -73,29 +74,37 @@ cubs <- function(N = 30,
   
   if(cubature == "random"){ # monte-carlo with random points
     
-    alpha <- runif(N, 0, 2*pi) # uniform [-pi,pi]
-    beta <- acos(runif(N, -1, 1)) # cos-uniform [-1,1]
+    if(N > max(random_table)) N <- max(random_table) else
+      N <- random_table[min(which(random_table >= N))]
+    
+    # N=2Nb^2
+    Nb <- as.integer(sqrt(N/2))
+    Na <- 2*Nb
+    
+    alpha <- runif(Na, 0, 2*pi) # uniform [-pi,pi]
+    beta <- acos(runif(Nb, -1, 1)) # cos-uniform [-1,1]
     nodes <- cbind(alpha=alpha, beta=beta)
     weights <- rep(1/nrow(nodes), nrow(nodes))
     return(cbind(as.matrix(nodes), weights))
   }
   
   if(cubature == "grid"){ # grid in acos beta and alpha
-    # may have a few more than N total points
-    # N = (P+1)*(P+1)/2 = (P+1)^2/2 -> P = [sqrt(2*N) - 1]
-    P <- sqrt(2*N) - 1
-    Nalpha <- ceiling(P+1)
-    Nbeta <- ceiling((P+1)/2) 
+    if(N > max(grid_table)) N <- max(grid_table) else
+      N <- grid_table[min(which(grid_table >= N))]
     
-    alpha <- seq(0, 2*pi *(1 - 1/Nalpha), by = 2*pi/Nalpha)
-    beta <- acos(seq(-1, 1, length.out = Nbeta)) 
+    # N=2Nb^2+2
+    Nb <- as.integer(sqrt((N-2)/2))
+    Na <- 2*Nb
+    
+    alpha <- seq(0, 2*pi *(1 - 1/Na), by = 2*pi/Na)
+    beta <- acos(seq(-1+2/Nb, 1-2/Nb, length.out = Nb)) 
     # cos-uniform ]-1,1[ exclude poles as otherwise many points there
-    nodes <- expand.grid(alpha=alpha, beta=beta[-c(1,Nbeta)])
-    weights <- rep(1/(Nalpha*Nbeta), nrow(nodes))
+    nodes <- expand.grid(alpha=alpha, beta=beta)
+    weights <- rep(1/(Na*Nb), nrow(nodes))
     nodes <- rbind(nodes,
                    c(0,0,0), 
                    c(0, pi, 0)) # add two poles
-    weights <- c(weights, 1/(Nbeta),1/(Nbeta))
+    weights <- c(weights, 1/Nb,1/Nb)
     
     return(cbind(as.matrix(nodes), weights))
   }
@@ -106,8 +115,10 @@ cubs <- function(N = 30,
     # Spherical Fibonacci Point Sets for Illumination Integrals
     # tj = arccos(1-(2j+1)/N)
     # pj = 2jpi phi-1
-    N0 <- N
-    if(N%%2 == 1) N <- N0+1
+    
+    if(N > max(fibonacci_table)) N <- max(fibonacci_table) else
+      N <- fibonacci_table[min(which(fibonacci_table >= N))]
+    
     jj <- seq(0,N-1)
     
     beta <- acos(1 - (2*jj+1)/N)

@@ -202,17 +202,17 @@ num$integral
 I3
 
 
-library(SphericalCubature)
+# library(SphericalCubature)
 
-S <- mvmesh::UnitSphere(n=3,  method="edgewise")
+# S <- mvmesh::UnitSphere(n=3,  method="edgewise")
 # S <- Orthants( n=3 )
-f_wrap <- function(x,.f=f3){p <- cart2sph(x[1], x[2], x[3]);  .f(p[1],pi/2-p[2])}
-res <- adaptIntegrateSphereTri(f_wrap,3, S$S, partitionInfo=F )
-str(res)
-I3
+# f_wrap <- function(x,.f=f3){p <- cart2sph(x[1], x[2], x[3]);  .f(p[1],pi/2-p[2])}
+# res <- adaptIntegrateSphereTri(f_wrap,3, S$S, partitionInfo=F )
+# str(res)
+# I3
 # sphereArea(n)/n
-plot(S)
-plot(res$subsimplices)
+# plot(S)
+# plot(res$subsimplices)
 
 
 test_quadrature <- function(quad){
@@ -306,5 +306,6 @@ aes(N, abs(value),colour=quad)) +
   theme()
 
 # p 
-egg::ggarrange(p0+coord_cartesian()+theme(legend.position = 'none'),p,ncol=2)
+g <- egg::ggarrange(p0+coord_cartesian()+theme(legend.position = 'none'),p,ncol=2)
 
+ggsave('functions.pdf',g, width=12,height=12)

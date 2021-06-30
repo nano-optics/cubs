@@ -64,7 +64,7 @@ wrap_cub <- function(N,cubature) {
   tibble(name=cubature,N=nrow(.c),cub=list(.c))
 } 
 
-l3 <- pmap_df(cross_df(list(N = c(seq(10,100,by=5),seq(500,2e3,by=500)),  
+l3 <- pmap_df(cross_df(list(N = c(seq(10,100,by=5),c(500,1000)),  
                        cubature = c('gl','fibonacci','qmc','random','grid'))), wrap_cub)
 dim(l3)
 l3 <- l3 %>% distinct()
@@ -76,8 +76,8 @@ lc <- rbind(l1,l2,l3)
 str(lc)
 
 
-pars <- rowwise(data.frame(l=c(10,15,20))) %>% 
-  mutate(m = list(seq(0, l))) %>% 
+pars <- rowwise(data.frame(l=c(10,15))) %>% 
+  mutate(m = list(seq(0, l,by=5))) %>% 
   unnest(cols = c(m))
 
 
