@@ -4,9 +4,7 @@
 \name{random_table}
 \alias{random_table}
 \title{random_table}
-\format{
-vector
-}
+\format{vector}
 \usage{
 random_table
 }

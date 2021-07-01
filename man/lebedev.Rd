@@ -4,14 +4,12 @@
 \name{lebedev}
 \alias{lebedev}
 \title{lebedev}
-\format{
-data.frame with 3 columns
+\format{data.frame with 3 columns
 \describe{
   \item{phi}{}
   \item{theta}{}
   \item{weight}{}
-}
-}
+}}
 \source{
 \url{https://people.sc.fsu.edu/~jburkardt/c_src/sphere_lebedev_rule/sphere_lebedev_rule.html}
 }

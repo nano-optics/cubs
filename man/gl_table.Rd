@@ -4,9 +4,7 @@
 \name{gl_table}
 \alias{gl_table}
 \title{gl_table}
-\format{
-vector
-}
+\format{vector}
 \usage{
 gl_table
 }

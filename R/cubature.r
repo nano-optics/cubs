@@ -74,37 +74,45 @@ cubs <- function(N = 30,
   
   if(cubature == "random"){ # monte-carlo with random points
     
-    if(N > max(random_table)) N <- max(random_table) else
-      N <- random_table[min(which(random_table >= N))]
     
-    # N=2Nb^2
-    Nb <- as.integer(sqrt(N/2))
-    Na <- 2*Nb
-    
-    alpha <- runif(Na, 0, 2*pi) # uniform [-pi,pi]
-    beta <- acos(runif(Nb, -1, 1)) # cos-uniform [-1,1]
+    alpha <- runif(N, 0, 2*pi) # uniform [-pi,pi]
+    beta <- acos(runif(N, -1, 1)) # cos-uniform [-1,1]
     nodes <- cbind(alpha=alpha, beta=beta)
     weights <- rep(1/nrow(nodes), nrow(nodes))
     return(cbind(as.matrix(nodes), weights))
   }
   
   if(cubature == "grid"){ # grid in acos beta and alpha
+    # mid-point rule
+    
     if(N > max(grid_table)) N <- max(grid_table) else
       N <- grid_table[min(which(grid_table >= N))]
-    
-    # N=2Nb^2+2
-    Nb <- as.integer(sqrt((N-2)/2))
+    Nb <- as.integer(sqrt(N/2)) # 2Nb^2 = N
     Na <- 2*Nb
     
     alpha <- seq(0, 2*pi *(1 - 1/Na), by = 2*pi/Na)
-    beta <- acos(seq(-1+2/Nb, 1-2/Nb, length.out = Nb)) 
-    # cos-uniform ]-1,1[ exclude poles as otherwise many points there
+    beta <- acos(seq(-1+1/Nb, 1-1/Nb, by = 2/Nb)) # Nb mid-points, no poles
     nodes <- expand.grid(alpha=alpha, beta=beta)
-    weights <- rep(1/(Na*Nb), nrow(nodes))
-    nodes <- rbind(nodes,
-                   c(0,0,0), 
-                   c(0, pi, 0)) # add two poles
-    weights <- c(weights, 1/Nb,1/Nb)
+    weights <- rep(1/nrow(nodes), nrow(nodes))
+    # # N=2Nb^2+2
+    # Nb <- as.integer(sqrt((N-2)/2))
+    # Na <- 2*Nb
+    # 
+    # alpha <- seq(0, 2*pi *(1 - 1/Na), by = 2*pi/Na)
+    # beta <- acos(seq(-1+2/Nb, 1-2/Nb, length.out = Nb)) 
+    
+    # Nb <- as.integer(sqrt(N/2) + 1)
+    # Na <- 2*Nb
+    # alpha <- seq(0, 2*pi *(1 - 1/Na), by = 2*pi/Na)
+    # beta <- acos(seq(-1, 1, length.out = Nb)) 
+    # cos-uniform ]-1,1[ exclude poles as otherwise many points there
+    # nodes <- expand.grid(alpha=alpha, beta=beta[-c(1,Nb)])
+    # nodes <- expand.grid(alpha=alpha, beta=beta[-c(1,Nb)])
+    # weights <- rep(1/nrow(nodes), nrow(nodes))
+    # nodes <- rbind(nodes,
+    #                c(0,0,0), 
+    #                c(0, pi, 0)) # add two poles
+    # weights <- c(weights, 1/Nb,1/Nb)
     
     return(cbind(as.matrix(nodes), weights))
   }

@@ -4,9 +4,7 @@
 \name{grid_table}
 \alias{grid_table}
 \title{grid_table}
-\format{
-vector
-}
+\format{vector}
 \usage{
 grid_table
 }

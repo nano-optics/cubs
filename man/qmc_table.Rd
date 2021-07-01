@@ -4,9 +4,7 @@
 \name{qmc_table}
 \alias{qmc_table}
 \title{qmc_table}
-\format{
-vector
-}
+\format{vector}
 \usage{
 qmc_table
 }
