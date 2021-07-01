@@ -73,13 +73,14 @@ m <- 7
 P87 <- Ryacas::yac_expr(glue::glue("(-1)^{m}*(1-x^2)^({m}/2)*D(x,{m})OrthoP({l}, x)"))
 
 f0 <- function(phi,theta){
-  # l <- 8; m <- 7
-  # Re(gammalm(l,abs(m)) * exp(1i*abs(m)*phi) * eval(P87, list(x = cos(theta))))
+  l <- 8; m <- 7
   # Re(exp(10i*phi)*sin(theta)^10*(164021*cos(theta)^10 - 189255*cos(theta)^8 + 71610*cos(theta)^6 - 10230*cos(theta)^4 + 465*cos(theta)^2 - 3))
   # yl8m5 <- Re( exp(5i*phi)* sin(theta)^5 * cos(theta)* (5 * cos(theta)^2 - 1))
   # yl8m5
-  Re(exp(10i*phi)*sin(theta)^10*(164021*cos(theta)^10 - 189255*cos(theta)^8 + 71610*cos(theta)^6 - 10230*cos(theta)^4 + 465*cos(theta)^2 - 3))
   
+  # Re(gammalm(l,abs(m)) * exp(1i*abs(m)*phi) * eval(P87, list(x = cos(theta))))  
+  Re(exp(10i*phi)*sin(theta)^10*(164021*cos(theta)^10 - 189255*cos(theta)^8 + 71610*cos(theta)^6 - 10230*cos(theta)^4 + 465*cos(theta)^2 - 3))
+
 }
 
 # I0 <- 4*pi
