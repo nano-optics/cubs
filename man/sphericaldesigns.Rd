@@ -4,12 +4,14 @@
 \name{sphericaldesigns}
 \alias{sphericaldesigns}
 \title{spherical designs}
-\format{data.frame with 3 columns
+\format{
+data.frame with 3 columns
 \describe{
   \item{phi}{}
   \item{theta}{}
   \item{weight}{}
-}}
+}
+}
 \source{
 \url{https://web.maths.unsw.edu.au/~rsw/Sphere/EffSphDes/}
 }

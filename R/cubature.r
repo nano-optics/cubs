@@ -87,10 +87,10 @@ cubs <- function(N = 30,
     
     if(N > max(grid_table)) N <- max(grid_table) else
       N <- grid_table[min(which(grid_table >= N))]
-    Nb <- as.integer(sqrt(N/2)) # 2Nb^2 = N
+    Nb <- sqrt(N/2) # 2Nb^2 = N
     Na <- 2*Nb
     
-    alpha <- seq(0, 2*pi *(1 - 1/Na), by = 2*pi/Na)
+    alpha <- seq(pi/Na, pi *(2 - 1/Na), by = 2*pi/Na)
     beta <- acos(seq(-1+1/Nb, 1-1/Nb, by = 2/Nb)) # Nb mid-points, no poles
     nodes <- expand.grid(alpha=alpha, beta=beta)
     weights <- rep(1/nrow(nodes), nrow(nodes))

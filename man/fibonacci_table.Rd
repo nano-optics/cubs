@@ -4,7 +4,9 @@
 \name{fibonacci_table}
 \alias{fibonacci_table}
 \title{fibonacci_table}
-\format{vector}
+\format{
+vector
+}
 \usage{
 fibonacci_table
 }
