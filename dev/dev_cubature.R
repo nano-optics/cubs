@@ -12,11 +12,11 @@ library(glue)
 # 
 
 
-cs <- list(qmc = c(qmc_table, 5000),
+cs <- list(qmc = c(qmc_table),
            fibonacci = fibonacci_table,
            gl = gl_table,
            random = random_table,
-           grid = c(grid_table, 5000),
+           grid = c(grid_table),
            lebedev = lebedev_table$N,
            sphericaldesigns = sphericaldesigns_table$N)
 
@@ -77,10 +77,10 @@ f0 <- function(phi,theta){
   # Re(exp(10i*phi)*sin(theta)^10*(164021*cos(theta)^10 - 189255*cos(theta)^8 + 71610*cos(theta)^6 - 10230*cos(theta)^4 + 465*cos(theta)^2 - 3))
   # yl8m5 <- Re( exp(5i*phi)* sin(theta)^5 * cos(theta)* (5 * cos(theta)^2 - 1))
   # yl8m5
-  
   # Re(gammalm(l,abs(m)) * exp(1i*abs(m)*phi) * eval(P87, list(x = cos(theta))))  
   Re(exp(10i*phi)*sin(theta)^10*(164021*cos(theta)^10 - 189255*cos(theta)^8 + 71610*cos(theta)^6 - 10230*cos(theta)^4 + 465*cos(theta)^2 - 3))
-  Re( exp(12i*phi)* sin(theta)^12)
+  
+ Re( exp(12i*phi)* sin(theta)^12)
 }
 
 # I0 <- 4*pi
@@ -113,7 +113,7 @@ test_cubature <- function(N, cubature){
 
 test_cubature(5, 'qmc')
 
-test <- pmap_df(allcubs %>% filter(N<500 | N==5000), test_cubature)
+test <- pmap_df(allcubs %>% filter(N<500), test_cubature)
 str(test)
 
 m <- pivot_longer(test,c('err0r','err0','err1','err2'))
