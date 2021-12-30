@@ -1,5 +1,5 @@
 Package: cubs
-Version: 0.0.1
+Version: 0.1.0
 Authors@R: person("Baptiste", "Auguie",
     email = "baptiste.auguie@vuw.ac.nz",
     role = c("aut", "cre"), comment = c("ORCID"="0000-0002-2749-5715"))
@@ -8,7 +8,9 @@ Title: Cubature on the 2-sphere
 Description: Cubature methods for angular averaging.
 URL: https://github.com/nano-optics/cubs
 Type: Package
+Encoding: UTF-8
 LazyData: true
+LazyDataCompression: gzip
 LazyLoad: yes
 VignetteBuilder: knitr
 Suggests:
@@ -25,4 +27,4 @@ Suggests:
 Imports:
     statmod,
     randtoolbox
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2

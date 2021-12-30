@@ -3,7 +3,7 @@
 
 # cubs - Integrate functions numerically on the sphere (S2)
 
-`cubs` is a utility package to wrap several commonly-used spherical
+`cubs` is a utility package wrapping several commonly-used spherical
 cubature rules in a convenient interface:
 
 -   `Lebedev`

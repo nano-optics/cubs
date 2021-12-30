@@ -6,6 +6,6 @@ reference:
   - title: cubature
     desc:  Cubature methods
     contents:
-    - starts_with("cubature_")
+    - starts_with("cubs")
     - init_site
     

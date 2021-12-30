@@ -9,7 +9,6 @@
 ##' @title cubature_sphere
 ##' @param N number of integration points
 ##' @param cubature cubature method, using either Gauss Legendre cubature (default), Quasi Monte Carlo, regular grid, or "cheap" (3 axes)
-##' @param init (qmc method only) logical: restart, or continue from previous call
 ##' @importFrom randtoolbox halton
 ##' @importFrom statmod gauss.quad
 ##' @export

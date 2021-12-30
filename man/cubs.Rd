@@ -14,8 +14,6 @@ cubs(
 \item{N}{number of integration points}
 
 \item{cubature}{cubature method, using either Gauss Legendre cubature (default), Quasi Monte Carlo, regular grid, or "cheap" (3 axes)}
-
-\item{init}{(qmc method only) logical: restart, or continue from previous call}
 }
 \description{
 cubature points on a sphere

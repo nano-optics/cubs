@@ -3,6 +3,7 @@
 #' nodes and weights
 #'
 #' @docType data
+#' @noRd
 #' @format data.frame with 3 columns
 #' \describe{
 #'   \item{phi}{}
@@ -19,6 +20,7 @@
 #' nodes and weights
 #'
 #' @docType data
+#' @noRd
 #' @format data.frame with 3 columns
 #' \describe{
 #'   \item{phi}{}
@@ -34,6 +36,7 @@
 #' nodes and weights
 #'
 #' @docType data
+#' @noRd
 #' @format data.frame with 3 columns
 #' \describe{
 #'   \item{phi}{}
@@ -48,6 +51,7 @@
 #' nodes and weights
 #' 
 #' @docType data
+#' @noRd
 #' @format data.frame with 3 columns
 #' \describe{
 #'   \item{phi}{}
@@ -62,6 +66,7 @@
 #' valid numbers
 #' 
 #' @docType data
+#' @noRd
 #' @format vector
 "gl_table"
 
@@ -70,6 +75,7 @@
 #' valid numbers
 #' 
 #' @docType data
+#' @noRd
 #' @format vector
 "grid_table"
 
@@ -78,6 +84,7 @@
 #' valid numbers
 #' 
 #' @docType data
+#' @noRd
 #' @format vector
 "qmc_table"
 
@@ -86,6 +93,7 @@
 #' valid numbers
 #' 
 #' @docType data
+#' @noRd
 #' @format vector
 "random_table"
 
@@ -94,5 +102,6 @@
 #' valid numbers
 #' 
 #' @docType data
+#' @noRd
 #' @format vector
 "fibonacci_table"
