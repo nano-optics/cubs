@@ -87,6 +87,8 @@ params <- allcubs %>% filter(N <= 5000) %>%
 ```
 
 ```{r convergence, echo=FALSE, fig.height=3}
+set.seed(123)
+
 I1 <- 216*pi/35
 I2 <- 6.6961822200736179523
 I3 <- 1
