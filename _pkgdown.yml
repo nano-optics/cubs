@@ -3,11 +3,6 @@ templates:
     bootswatch: lumen
 
 reference:
-  - title: Ylm
-    desc:  Spherical harmonics
-    contents:
-    - starts_with("ylm_")
-    - init_site
   - title: cubature
     desc:  Cubature methods
     contents:

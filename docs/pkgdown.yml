@@ -1,7 +1,7 @@
-pandoc: 2.11.2
-pkgdown: 1.4.1
-pkgdown_sha: ~
+pandoc: 2.11.4
+pkgdown: 1.9000.9000.9000
+pkgdown_sha: 8a0332494bfd1edd015dbea701de4d2bc8c5d7b7
 articles:
   Cubature: Cubature.html
-  Ylm: Ylm.html
+last_built: 2021-12-30T10:54Z
 

@@ -20,10 +20,9 @@ Suggests:
     tidyr,
     purrr,
     glue,
-    gridExtra
+    gridExtra,
+    Ryacas
 Imports:
     statmod,
-    randtoolbox,
-    glue,
-    Ryacas
+    randtoolbox
 RoxygenNote: 7.1.1

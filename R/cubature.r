@@ -20,19 +20,20 @@ cubs <- function(N = 30,
                                 'fibonacci', 'grid', "qmc", "random")){
   
   cubature <- match.arg(cubature)
+  var_names <- c('phi','theta','weight')
   
   if(cubature == "lebedev"){
     data(lebedev_table)
     if(N > max(lebedev_table$N)) w <- nrow(lebedev_table) else
     w <- min(which(lebedev_table$N >= N))
-    return(lebedev[[w]])
+    return(setNames(lebedev[[w]], var_names))
   }
   
   if(cubature == "sphericaldesigns"){
     data(sphericaldesigns_table)
     if(N > max(sphericaldesigns_table$N)) w <- nrow(sphericaldesigns_table) else
       w <- min(which(sphericaldesigns_table$N >= N))
-    return(sphericaldesigns[[w]])
+    return(setNames(data.frame(sphericaldesigns[[w]]), var_names))
   }
   
   
@@ -58,7 +59,7 @@ cubs <- function(N = 30,
     # (1/4pi for the average, but * 2pi from range of alpha)
     weights <- 1/2 * weights$alpha * weights$beta
     
-    return(cbind(as.matrix(nodes), weights))
+    return(setNames(data.frame(as.matrix(nodes), weights), var_names))
   }
   
   if(cubature == "qmc"){ # quasi monte-carlo
@@ -69,7 +70,7 @@ cubs <- function(N = 30,
     beta <- acos(2*p[,2] - 1) # cos(beta) in [-1,1]
     nodes <- cbind(alpha=alpha, beta=beta)
     weights <- rep(1/nrow(nodes), nrow(nodes))
-    return(cbind(as.matrix(nodes), weights))
+    return(setNames(data.frame(as.matrix(nodes), weights), var_names))
   }
   
   if(cubature == "random"){ # monte-carlo with random points
@@ -79,7 +80,7 @@ cubs <- function(N = 30,
     beta <- acos(runif(N, -1, 1)) # cos-uniform [-1,1]
     nodes <- cbind(alpha=alpha, beta=beta)
     weights <- rep(1/nrow(nodes), nrow(nodes))
-    return(cbind(as.matrix(nodes), weights))
+    return(setNames(data.frame(as.matrix(nodes), weights), var_names))
   }
   
   if(cubature == "grid"){ # grid in acos beta and alpha
@@ -95,7 +96,7 @@ cubs <- function(N = 30,
     nodes <- expand.grid(alpha=alpha, beta=beta)
     weights <- rep(1/nrow(nodes), nrow(nodes))
   
-    return(cbind(as.matrix(nodes), weights))
+    return(setNames(data.frame(as.matrix(nodes), weights), var_names))
   }
   
   
@@ -116,7 +117,7 @@ cubs <- function(N = 30,
     
     nodes <- cbind(alpha=alpha, beta=beta)
     weights <- rep(1/nrow(nodes), nrow(nodes))
-    return(cbind(as.matrix(nodes), weights))
+    return(setNames(data.frame(as.matrix(nodes), weights), var_names))
   }
   
   

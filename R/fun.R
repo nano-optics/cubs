@@ -24,13 +24,9 @@ f2 <- function(phi, theta){
 }
 
 ##' @export
-f3 <- function(phi, theta){
+f3 <- function(phi,theta){
   
-  x <- cos(phi)*sin(theta)
-  y <- sin(phi)*sin(theta)
-  z <- cos(theta)
-  
-  (1 + tanh(-9*x - 9*y + 9*z)) /9
+  1/(4*pi) + Re( exp(12i*phi)* sin(theta)^12)
 }
 
 
