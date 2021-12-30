@@ -1,7 +1,6 @@
 ---
 output:
-  github_document:
-    html_preview: false
+  github_document
 ---
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
@@ -60,13 +59,13 @@ f_{1}(x, y, z)= 1+x+y^{2}+x^{2} y + x^{4}+y^{5}+x^{2} y^{2} z^{2}
 $$
 
 with the usual spherical coordinates,
-$$
+
 \begin{align}
 x = &\cos(\varphi)\sin(\theta)\\
 y = & \sin(\varphi)\sin(\theta)\\
 z = & \cos(\theta).
 \end{align}
-$$
+
 We want to estimate the integral
 $$
 I = \frac{1}{4\pi}\int_0^{\pi} \int_0^{2\pi}  f(\varphi,\theta)  \sin\theta\, \mathrm{d} \varphi \mathrm{d} \theta .
