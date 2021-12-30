@@ -63,9 +63,9 @@ with the usual spherical coordinates,
 $$
 \begin{align}
 x = &\cos(\varphi)\sin(\theta)\\
-  y = & \sin(\varphi)\sin(\theta)\\
-  z = & \cos(\theta).
-  \end{align}
+y = & \sin(\varphi)\sin(\theta)\\
+z = & \cos(\theta).
+\end{align}
 $$
 We want to estimate the integral
 $$
