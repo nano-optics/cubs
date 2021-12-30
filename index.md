@@ -14,6 +14,8 @@ cubature rules in a convenient interface:
 -   `Quasi Monte-Carlo`
 -   `random`
 
+![cubs](./man/figures/cubs.png)
+
 ## Installation
 
 You can install from [GitHub](https://github.com/nano-optics/cubs) with:
