@@ -54,6 +54,23 @@ Let’s try a known integrand,
 
 *f*<sub>1</sub>(*x*, *y*, *z*) = 1 + *x* + *y*<sup>2</sup> + *x*<sup>2</sup>*y* + *x*<sup>4</sup> + *y*<sup>5</sup> + *x*<sup>2</sup>*y*<sup>2</sup>*z*<sup>2</sup>
 
+with the usual spherical coordinates,
+$$
+\\begin{align}
+x = &\\cos(\\varphi)\\sin(\\theta)\\\\
+  y = & \\sin(\\varphi)\\sin(\\theta)\\\\
+  z = & \\cos(\\theta).
+  \\end{align}
+$$
+We want to estimate the integral
+$$
+I = \\frac{1}{4\\pi}\\int\_0^{\\pi} \\int\_0^{2\\pi}  f(\\varphi,\\theta)  \\sin\\theta\\, \\mathrm{d} \\varphi \\mathrm{d} \\theta .
+$$
+numerically, i.e. with a spherical cubature
+$$
+I \\approx  \\sum\_{\\varphi\_i,\\theta\_i}^{i=1\\dots N} f(\\varphi\_i,\\theta\_i) w\_i,
+$$
+
 <img src="man/figures/README-testfun-1.png" width="100%" />
 
 We compare the exact value, 216*π*/35, to the Lebedev cubature for
