@@ -22,18 +22,76 @@ knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
 
 ## Overview of available cubatures
 
+The main function of the package is `cubs(N, method)`, where `N` is the requested number of integration points, and `method` one of the built-in cubature methods. The function returns a data.frame with three columns: `phi`, the azimuth ($\varphi\in [0,2\pi]$), `theta`, the polar angle ($\theta\in [0,\pi]$), and `weight` the associated cubature weight. 
+
 ```{r demo, message=FALSE, echo=FALSE, results='asis'}
 library(cubs)
 library(glue)
 for (method in c('lebedev', 'sphericaldesigns', "gl", 'fibonacci', 'grid', "qmc", "random")){
   # cat(glue("", method))
-  print(knitr::kable(head(cubs(N = 5, method)), caption = method))
+  print(knitr::kable(cubs(N = 5, method), caption = method))
 }
+```
+
+Note that the requested number of points $N$ is interpreted as a minimum number; the exact number of points will vary for each method, some having relatively sparse coverage.
+
+```{r granularity, echo=FALSE, fig.height=2}
+library(purrr)
+library(ggplot2)
+library(dplyr)
+cs <- list(qmc = qmc_table,
+           fibonacci = fibonacci_table,
+           gl = gl_table,
+           random = random_table,
+           grid = grid_table,
+           lebedev = lebedev_table$N,
+           sphericaldesigns = sphericaldesigns_table$N)
+
+
+all <- purrr::map2_df(names(cs), cs, function(.x,.y) 
+  data.frame(cubature = .x, N=.y, stringsAsFactors = FALSE))
+
+all$cubature <- factor(all$cubature, levels = unique(all$cubature))
+
+all$cubature <- factor(all$cubature, 
+                       levels = c("random","qmc","grid",  "fibonacci", "gl", "sphericaldesigns", "lebedev"),
+                       labels = c("random","qmc","grid",  "fibonacci", "gl", "sd", "lebedev"))
+
+ggplot(all %>% filter(N<200), aes(cubature, N, colour=cubature)) +
+  geom_point(pch='|',size=5) +
+  coord_flip() +
+  scale_y_continuous(expand=c(0,0),breaks=seq(0,200,by=50),lim=c(0,200))+
+  theme_bw() + guides(colour='none') +
+  theme(axis.title.y = element_blank(),
+        axis.ticks.y = element_blank(),
+        panel.border = element_blank(),
+        axis.text.y = element_text(hjust = 1), 
+        axis.text.x = element_text(), 
+        plot.margin = margin(5,20,5,5),
+        panel.grid.major.x = element_line(colour = 'grey90'),
+        axis.ticks.x = element_line(), axis.ticks.length=unit(2,'mm'))+
+  labs(y = "N", colour='cubature')
+
 ```
 
 ## Test functions
 
-```{r integrands, echo=FALSE, fig.height=3}
+We now compare the performance of these methods on 3 different integrands, 
+
+
+\begin{align}
+f_{1}(x, y, z)=& 1+x+y^{2}+x^{2} y + x^{4}+y^{5}+x^{2} y^{2} z^{2} \\
+f_{2}(x, y, z)=& \tfrac{3}{4} e^{\left[-(9 x-2)^{2} / 4-(9 y-2)^{2} / 4-(9 z-2)^{2} / 4\right]} +\tfrac{3}{4} e^{\left[-(9 x+1)^{2} / 49-(9 y+1) / 10-(9 z+1) / 10\right]} +\tfrac{1}{2} e^{\left[-(9 x-7)^{2} / 4-(9 y-3)^{2} / 4-(9 z-5)^{2} / 4\right]}-\tfrac{1}{5} e^{\left[-(9 x-4)^{2}-(9 y-7)^{2}-(9 z-5)^{2}\right]} \\
+f_{3}(\varphi, \theta)=& \tfrac{1}{4\pi} + \cos(12\varphi)\sin^{12}(\theta)
+\end{align}
+with the usual spherical coordinates,
+\begin{align}
+x = &\cos(\varphi)\sin(\theta)\\
+  y = & \sin(\varphi)\sin(\theta)\\
+  z = & \cos(\theta).
+\end{align}
+
+```{r integrands, echo=FALSE, fig.height=2}
 library(dplyr)
 library(ggplot2)
 g <- expand.grid(phi=seq(0,2*pi,length=360), theta=seq(0,pi,length=180))
@@ -65,17 +123,18 @@ p
 
 ## Convergence comparison
 
+We plot below the relative error against the known integrals ($I_1 = 216\pi/35$, $I_2  =6.6961822200736179523\dots$, $I_3=1$).
 
 ```{r params, echo=FALSE, results='asis'}
 library(purrr)
 cs <- list(
   qmc = qmc_table[!as.logical(qmc_table %% 10)],
-           fibonacci = fibonacci_table[!as.logical(fibonacci_table %% 10)],
-           gl = gl_table,
-           random = random_table[!as.logical(random_table %% 10)],
-           grid = c(grid_table),
-           lebedev = lebedev_table$N,
-           sphericaldesigns = sphericaldesigns_table$N)
+  fibonacci = fibonacci_table[!as.logical(fibonacci_table %% 10)],
+  gl = gl_table,
+  random = random_table[!as.logical(random_table %% 10)],
+  grid = c(grid_table),
+  lebedev = lebedev_table$N,
+  sphericaldesigns = sphericaldesigns_table$N)
 
 allcubs <- purrr::map2_df(names(cs), cs, 
                           function(.x,.y) data.frame(cubature = .x, N=.y, stringsAsFactors = FALSE))
@@ -164,3 +223,6 @@ ggplot(m, aes(N, value, colour=cubname)) +
   labs(x = expression(N[inc]), y='relative error',
        colour='')
 ```
+
+Three methods stand out and vastly outperform the others: Lebedev, Spherical t-Designs, and (somewhat behind) Gauß-Legendre. These cubature methods are known to integrate exactly spherical harmonics up to a given order, and are in that sense optimal choices (assuming the integrand is well-behaved in this basis).
+

@@ -78,7 +78,7 @@
       <h1 data-toc-skip>Cubature methods</h1>
                         <h4 data-toc-skip class="author">baptiste Auguié</h4>
             
-            <h4 data-toc-skip class="date">30 December, 2021</h4>
+            <h4 data-toc-skip class="date">31 December, 2021</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/nano-optics/cubs/blob/HEAD/vignettes/Cubature.Rmd" class="external-link"><code>vignettes/Cubature.Rmd</code></a></small>
       <div class="hidden name"><code>Cubature.Rmd</code></div>
@@ -90,6 +90,7 @@
 <div class="section level2">
 <h2 id="overview-of-available-cubatures">Overview of available cubatures<a class="anchor" aria-label="anchor" href="#overview-of-available-cubatures"></a>
 </h2>
+<p>The main function of the package is <code>cubs(N, method)</code>, where <code>N</code> is the requested number of integration points, and <code>method</code> one of the built-in cubature methods. The function returns a data.frame with three columns: <code>phi</code>, the azimuth (<span class="math inline">\(\varphi\in [0,2\pi]\)</span>), <code>theta</code>, the polar angle (<span class="math inline">\(\theta\in [0,\pi]\)</span>), and <code>weight</code> the associated cubature weight.</p>
 <table class="table">
 <caption>lebedev</caption>
 <thead><tr class="header">
@@ -208,6 +209,16 @@
 <td align="right">0.9553166</td>
 <td align="right">0.125</td>
 </tr>
+<tr class="odd">
+<td align="right">3.141593</td>
+<td align="right">0.9553166</td>
+<td align="right">0.125</td>
+</tr>
+<tr class="even">
+<td align="right">4.712389</td>
+<td align="right">0.9553166</td>
+<td align="right">0.125</td>
+</tr>
 </tbody>
 </table>
 <table class="table">
@@ -288,6 +299,16 @@
 <td align="right">1.047198</td>
 <td align="right">0.125</td>
 </tr>
+<tr class="odd">
+<td align="right">3.9269908</td>
+<td align="right">1.047198</td>
+<td align="right">0.125</td>
+</tr>
+<tr class="even">
+<td align="right">5.4977871</td>
+<td align="right">1.047198</td>
+<td align="right">0.125</td>
+</tr>
 </tbody>
 </table>
 <table class="table">
@@ -334,42 +355,56 @@
 </tr></thead>
 <tbody>
 <tr class="odd">
-<td align="right">2.675048</td>
-<td align="right">0.6237878</td>
+<td align="right">6.0341085</td>
+<td align="right">1.630127</td>
 <td align="right">0.2</td>
 </tr>
 <tr class="even">
-<td align="right">5.165094</td>
-<td align="right">2.2889693</td>
+<td align="right">2.2592572</td>
+<td align="right">2.009669</td>
 <td align="right">0.2</td>
 </tr>
 <tr class="odd">
-<td align="right">5.778511</td>
-<td align="right">2.0562673</td>
+<td align="right">2.6308782</td>
+<td align="right">2.377605</td>
 <td align="right">0.2</td>
 </tr>
 <tr class="even">
-<td align="right">3.544276</td>
-<td align="right">1.4199423</td>
+<td align="right">1.8933963</td>
+<td align="right">2.312224</td>
 <td align="right">0.2</td>
 </tr>
 <tr class="odd">
-<td align="right">3.329411</td>
-<td align="right">1.6095976</td>
+<td align="right">0.2275461</td>
+<td align="right">1.428121</td>
 <td align="right">0.2</td>
 </tr>
 </tbody>
 </table>
+<p>Note that the requested number of points <span class="math inline">\(N\)</span> is interpreted as a minimum number; the exact number of points will vary for each method, some having relatively sparse coverage.</p>
+<p><img src="Cubature_files/figure-html/granularity-1.png" width="700"></p>
 </div>
 <div class="section level2">
 <h2 id="test-functions">Test functions<a class="anchor" aria-label="anchor" href="#test-functions"></a>
 </h2>
+<p>We now compare the performance of these methods on 3 different integrands,</p>
+<p><span class="math display">\[\begin{align}
+f_{1}(x, y, z)=&amp; 1+x+y^{2}+x^{2} y + x^{4}+y^{5}+x^{2} y^{2} z^{2} \\
+f_{2}(x, y, z)=&amp; \tfrac{3}{4} e^{\left[-(9 x-2)^{2} / 4-(9 y-2)^{2} / 4-(9 z-2)^{2} / 4\right]} +\tfrac{3}{4} e^{\left[-(9 x+1)^{2} / 49-(9 y+1) / 10-(9 z+1) / 10\right]} +\tfrac{1}{2} e^{\left[-(9 x-7)^{2} / 4-(9 y-3)^{2} / 4-(9 z-5)^{2} / 4\right]}-\tfrac{1}{5} e^{\left[-(9 x-4)^{2}-(9 y-7)^{2}-(9 z-5)^{2}\right]} \\
+f_{3}(\varphi, \theta)=&amp; \tfrac{1}{4\pi} + \cos(12\varphi)\sin^{12}(\theta)
+\end{align}\]</span> with the usual spherical coordinates, <span class="math display">\[\begin{align}
+x = &amp;\cos(\varphi)\sin(\theta)\\
+  y = &amp; \sin(\varphi)\sin(\theta)\\
+  z = &amp; \cos(\theta).
+\end{align}\]</span></p>
 <p><img src="Cubature_files/figure-html/integrands-1.png" width="700"></p>
 </div>
 <div class="section level2">
 <h2 id="convergence-comparison">Convergence comparison<a class="anchor" aria-label="anchor" href="#convergence-comparison"></a>
 </h2>
+<p>We plot below the relative error against the known integrals (<span class="math inline">\(I_1 = 216\pi/35\)</span>, <span class="math inline">\(I_2 =6.6961822200736179523\dots\)</span>, <span class="math inline">\(I_3=1\)</span>).</p>
 <p><img src="Cubature_files/figure-html/convergence-1.png" width="700"></p>
+<p>Three methods stand out and vastly outperform the others: Lebedev, Spherical t-Designs, and (somewhat behind) Gauß-Legendre. These cubature methods are known to integrate exactly spherical harmonics up to a given order, and are in that sense optimal choices (assuming the integrand is well-behaved in this basis).</p>
 </div>
   </div>
 
