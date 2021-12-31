@@ -27,7 +27,7 @@ remotes::install_github('nano-optics/cubs')
 
 ## Simple example
 
-Let’s request a Lebedev cubature with approximately 15 points,
+Let’s request a Lebedev cubature with approximately 10 points,
 
 ``` r
 cubs(N = 10, 'lebedev')
@@ -188,3 +188,24 @@ increasing number of points.
 | lebedev N=14 | 19.5476876223365 |
 | lebedev N=26 | 19.3881146621542 |
 | exact        | 19.3881146621542 |
+
+
+## Acknowledgements
+
+This package merely wraps existing rules in a convenient interface; the original cubature points were obtained from:
+
+- `Lebedev`:  [from John Burkardt's webpage](https://people.sc.fsu.edu/~jburkardt/c_src/sphere_lebedev_rule/sphere_lebedev_rule.html), using the `SPHERE_LEBEDEV_RULE` C routine. The routine itself implements the original reference by Lebedev and Laikov
+
+    Vyacheslav Lebedev, Dmitri Laikov,
+    A quadrature formula for the sphere of the 131st
+    algebraic order of accuracy,
+    Russian Academy of Sciences Doklady Mathematics,
+    Volume 59, Number 3, 1999, pages 477-481.
+
+- `Spherical t-Designs`: [from Rob Womersley's webpage](https://web.maths.unsw.edu.au/~rsw/Sphere/EffSphDes/), using the provided tables of Spherical t-designs (SF29-Nov-2012). 
+
+- `Gauß-Legendre`: we use the `gauss.quad` routine from the `statmod` package to compute 1D quadrature nodes on $[-1,1]$, and take a cartesian product with a mid-point rule along $\varphi$.
+
+- `QMC`: we use the `halton` routine from the `randtoolbox` package to generate a 2D low-discrepancy sequence of points in $[0,1]\times[0,1]$.
+
+`Fibonacci`, `grid`, and `random` are implemented directly in the package.

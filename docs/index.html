@@ -101,7 +101,7 @@
 <div class="section level2">
 <h2 id="simple-example">Simple example<a class="anchor" aria-label="anchor" href="#simple-example"></a>
 </h2>
-<p>Let’s request a Lebedev cubature with approximately 15 points,</p>
+<p>Let’s request a Lebedev cubature with approximately 10 points,</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="reference/cubs.html">cubs</a></span><span class="op">(</span>N <span class="op">=</span> <span class="fl">10</span>, <span class="st">'lebedev'</span><span class="op">)</span></code></pre></div>
 <table class="table">
@@ -201,9 +201,12 @@
 <p>Lebedev, 10 points requested</p>
 <p>Let’s try a known integrand,</p>
 <p><em>f</em><sub>1</sub>(<em>x</em>, <em>y</em>, <em>z</em>) = 1 + <em>x</em> + <em>y</em><sup>2</sup> + <em>x</em><sup>2</sup><em>y</em> + <em>x</em><sup>4</sup> + <em>y</em><sup>5</sup> + <em>x</em><sup>2</sup><em>y</em><sup>2</sup><em>z</em><sup>2</sup></p>
-<p>with the usual spherical coordinates.</p>
-<p>We want to estimate the integral <?xml version="1.0" encoding="utf-8" standalone="no"?><math xmlns="http://www.w3.org/1998/Math/MathML" display="block" title="I = \frac{1}{4\pi}\int_0^{\pi} \int_0^{2\pi}  f(\varphi,\theta)  \sin\theta\, \mathrm{d} \varphi \mathrm{d} \theta "><mrow><mi>I</mi><mo>=</mo><mfrac><mrow><mn>1</mn></mrow><mrow><mn>4</mn><mi>π</mi></mrow></mfrac><msubsup><mo largeop="true">∫</mo><mrow><mn>0</mn></mrow><mrow><mi>π</mi></mrow></msubsup><msubsup><mo largeop="true">∫</mo><mrow><mn>0</mn></mrow><mrow><mn>2</mn><mi>π</mi></mrow></msubsup><mi>f</mi><mo stretchy="false">(</mo><mi>φ</mi><mo>,</mo><mi>θ</mi><mo stretchy="false">)</mo><mo>sin</mo><mi>θ</mi><mspace width="0.167em"></mspace><mtext mathvariant="normal"><mi>d</mi></mtext><mi>φ</mi><mtext mathvariant="normal"><mi>d</mi></mtext><mi>θ</mi></mrow></math> numerically, i.e. with a spherical cubature</p>
-<?xml version="1.0" encoding="utf-8" standalone="no"?><p><math xmlns="http://www.w3.org/1998/Math/MathML" display="block" title="I \approx  \sum_{\varphi_i,\theta_i}^{i=1\dots N} f(\varphi_i,\theta_i) w_i "><mrow><mi>I</mi><mo>≈</mo><munderover><mo largeop="true">∑</mo><mrow><msub><mrow><mi>φ</mi></mrow><mrow><mi>i</mi></mrow></msub><mo>,</mo><msub><mrow><mi>θ</mi></mrow><mrow><mi>i</mi></mrow></msub></mrow><mrow><mi>i</mi><mo>=</mo><mn>1</mn><mo>…</mo><mi>N</mi></mrow></munderover><mi>f</mi><mo stretchy="false">(</mo><msub><mrow><mi>φ</mi></mrow><mrow><mi>i</mi></mrow></msub><mo>,</mo><msub><mrow><mi>θ</mi></mrow><mrow><mi>i</mi></mrow></msub><mo stretchy="false">)</mo><msub><mrow><mi>w</mi></mrow><mrow><mi>i</mi></mrow></msub></mrow></math></p>
+<p>with the usual spherical coordinates,</p>
+<p>We want to estimate the integral <span class="math display">$$
+I = \\frac{1}{4\\pi}\\int\_0^{\\pi} \\int\_0^{2\\pi}  f(\\varphi,\\theta)  \\sin\\theta\\, \\mathrm{d} \\varphi \\mathrm{d} \\theta .
+$$</span> numerically, i.e. with a spherical cubature <span class="math display">$$
+I \\approx  \\sum\_{\\varphi\_i,\\theta\_i}^{i=1\\dots N} f(\\varphi\_i,\\theta\_i) w\_i,
+$$</span></p>
 <p><img src="reference/figures/README-testfun-1.png" width="100%"></p>
 <p>We compare the exact value, 216<em>π</em>/35, to the Lebedev cubature for increasing number of points.</p>
 <table class="table">
@@ -226,6 +229,21 @@
 </tr>
 </tbody>
 </table>
+</div>
+<div class="section level2">
+<h2 id="acknowledgements">Acknowledgements<a class="anchor" aria-label="anchor" href="#acknowledgements"></a>
+</h2>
+<p>This package merely wraps existing rules in a convenient interface; the original cubature points were obtained from:</p>
+<ul>
+<li>
+<p><code>Lebedev</code>: <a href="https://people.sc.fsu.edu/~jburkardt/c_src/sphere_lebedev_rule/sphere_lebedev_rule.html" class="external-link">from John Burkardt’s webpage</a>, using the <code>SPHERE_LEBEDEV_RULE</code> C routine. The routine itself implements the original reference by Lebedev and Laikov</p>
+<p>Vyacheslav Lebedev, Dmitri Laikov, A quadrature formula for the sphere of the 131st algebraic order of accuracy, Russian Academy of Sciences Doklady Mathematics, Volume 59, Number 3, 1999, pages 477-481.</p>
+</li>
+<li><p><code>Spherical t-Designs</code>: <a href="https://web.maths.unsw.edu.au/~rsw/Sphere/EffSphDes/" class="external-link">from Rob Womersley’s webpage</a>, using the provided tables of Spherical t-designs (SF29-Nov-2012).</p></li>
+<li><p><code>Gauß-Legendre</code>: we use the <code>gauss.quad</code> routine from the <code>statmod</code> package to compute 1D quadrature nodes on [ − 1, 1], and take a cartesian product with a mid-point rule along <em>φ</em>.</p></li>
+<li><p><code>QMC</code>: we use the <code>halton</code> routine from the <code>randtoolbox</code> package to generate a 2D low-discrepancy sequence of points in [0, 1] × [0, 1].</p></li>
+</ul>
+<p><code>Fibonacci</code>, <code>grid</code>, and <code>random</code> are implemented directly in the package.</p>
 </div>
 </div>
   </div>
