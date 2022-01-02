@@ -40,3 +40,4 @@ vignettes/*.pdf
 rawdata/lebedev/inc*
 rawdata/sphericaldesigns/inc*
 rawdata/sphericaldesigns/SF29-Nov-2012/
+.DS_Store

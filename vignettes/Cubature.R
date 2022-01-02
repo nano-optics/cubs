@@ -6,17 +6,55 @@ library(cubs)
 library(glue)
 for (method in c('lebedev', 'sphericaldesigns', "gl", 'fibonacci', 'grid', "qmc", "random")){
   # cat(glue("", method))
-  print(knitr::kable(head(cubs(N = 5, method)), caption = method))
+  print(knitr::kable(cubs(N = 5, method), caption = method))
 }
 
-## ----integrands, echo=FALSE, fig.height=3-------------------------------------
+## ----granularity, echo=FALSE, fig.height=2------------------------------------
+library(purrr)
+library(ggplot2)
+library(dplyr)
+cs <- list(qmc = cubs::qmc_table,
+           fibonacci = cubs::fibonacci_table,
+           gl = cubs::gl_table,
+           random = cubs::random_table,
+           grid = cubs::grid_table,
+           lebedev = cubs::lebedev_table$N,
+           sphericaldesigns = cubs::sphericaldesigns_table$N)
+
+
+all <- purrr::map2_df(names(cs), cs, function(.x,.y) 
+  data.frame(cubature = .x, N=.y, stringsAsFactors = FALSE))
+
+all$cubature <- factor(all$cubature, levels = unique(all$cubature))
+
+all$cubature <- factor(all$cubature, 
+                       levels = c("random","qmc","grid",  "fibonacci", "gl", "sphericaldesigns", "lebedev"),
+                       labels = c("random","qmc","grid",  "fibonacci", "gl", "sd", "lebedev"))
+
+ggplot(all %>% filter(N<200), aes(cubature, N, colour=cubature)) +
+  geom_point(pch='|',size=5) +
+  coord_flip() +
+  scale_y_continuous(expand=c(0,0),breaks=seq(0,200,by=50),lim=c(0,200))+
+  theme_bw() + guides(colour='none') +
+  theme(axis.title.y = element_blank(),
+        axis.ticks.y = element_blank(),
+        panel.border = element_blank(),
+        axis.text.y = element_text(hjust = 1), 
+        axis.text.x = element_text(), 
+        plot.margin = margin(5,20,5,5),
+        panel.grid.major.x = element_line(colour = 'grey90'),
+        axis.ticks.x = element_line(), axis.ticks.length=unit(2,'mm'))+
+  labs(y = "N", colour='cubature')
+
+
+## ----integrands, echo=FALSE, fig.height=2-------------------------------------
 library(dplyr)
 library(ggplot2)
 g <- expand.grid(phi=seq(0,2*pi,length=360), theta=seq(0,pi,length=180))
 
-g$f1 <- f1(g$phi,g$theta)
-g$f2 <- f2(g$phi,g$theta)
-g$f3 <- f3(g$phi,g$theta)
+g$f1 <- cubs:::f1(g$phi,g$theta)
+g$f2 <- cubs:::f2(g$phi,g$theta)
+g$f3 <- cubs:::f3(g$phi,g$theta)
 
 library(tidyr)
 gm <- g %>% pivot_longer(c('f1','f2','f3')) %>% 
@@ -41,13 +79,13 @@ p
 ## ----params, echo=FALSE, results='asis'---------------------------------------
 library(purrr)
 cs <- list(
-  qmc = qmc_table[!as.logical(qmc_table %% 10)],
-           fibonacci = fibonacci_table[!as.logical(fibonacci_table %% 10)],
-           gl = gl_table,
-           random = random_table[!as.logical(random_table %% 10)],
-           grid = c(grid_table),
-           lebedev = lebedev_table$N,
-           sphericaldesigns = sphericaldesigns_table$N)
+  qmc = cubs::qmc_table[!as.logical(cubs::qmc_table %% 10)],
+  fibonacci = cubs::fibonacci_table[!as.logical(cubs::fibonacci_table %% 10)],
+  gl = cubs::gl_table,
+  random = cubs::random_table[!as.logical(cubs::random_table %% 10)],
+  grid = c(cubs::grid_table),
+  lebedev = cubs::lebedev_table$N,
+  sphericaldesigns = cubs::sphericaldesigns_table$N)
 
 allcubs <- purrr::map2_df(names(cs), cs, 
                           function(.x,.y) data.frame(cubature = .x, N=.y, stringsAsFactors = FALSE))
@@ -58,6 +96,8 @@ params <- allcubs %>% filter(N <= 5000) %>%
 
 
 ## ----convergence, echo=FALSE, fig.height=3------------------------------------
+set.seed(123)
+
 I1 <- 216*pi/35
 I2 <- 6.6961822200736179523
 I3 <- 1
@@ -65,9 +105,9 @@ I3 <- 1
 test_quadrature <- function(ii){  
   q <- data.frame(cubs(params$N[ii], params$cubature[ii]))
   
-  vals1 <- f1(q$phi, q$theta) 
-  vals2 <- f2(q$phi, q$theta) 
-  vals3 <- f3(q$phi, q$theta) 
+  vals1 <- cubs:::f1(q$phi, q$theta) 
+  vals2 <- cubs:::f2(q$phi, q$theta) 
+  vals3 <- cubs:::f3(q$phi, q$theta) 
   
   d1 <- data.frame(sum1 = 4*pi*sum(vals1 * q$weight),
                    sum2 = 4*pi*sum(vals2 * q$weight),

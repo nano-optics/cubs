@@ -5,7 +5,7 @@ Authors@R: person("Baptiste", "Auguie",
     role = c("aut", "cre"), comment = c("ORCID"="0000-0002-2749-5715"))
 License: Mozilla Public License Version 2.0
 Title: Cubature on the 2-sphere
-Description: Cubature methods for angular averaging.
+Description: Cubature methods for numerical integration over the sphere, such as angular averaging over the full solid angle
 URL: https://github.com/nano-optics/cubs
 Type: Package
 Encoding: UTF-8
@@ -17,6 +17,7 @@ Suggests:
     ggplot2,
     testthat,
     knitr,
+    scales,
     rmarkdown,
     dplyr,
     tidyr,
@@ -28,3 +29,5 @@ Imports:
     statmod,
     randtoolbox
 RoxygenNote: 7.1.2
+Depends: 
+     R (>= 3.5.0)

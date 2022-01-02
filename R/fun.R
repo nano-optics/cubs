@@ -1,5 +1,6 @@
+## unexported test functions
 
-##' @export
+## @export
 f1 <- function(phi, theta){
   
   x <- cos(phi)*sin(theta)
@@ -9,7 +10,7 @@ f1 <- function(phi, theta){
   1+x+y^2 +x^2*y+x^4 +y^5 +x^2*y^2*z^2
 }
 
-##' @export
+## @export
 f2 <- function(phi, theta){
   
   x <- cos(phi)*sin(theta)
@@ -23,7 +24,7 @@ f2 <- function(phi, theta){
   
 }
 
-##' @export
+## @export
 f3 <- function(phi,theta){
   
   1/(4*pi) + Re( exp(12i*phi)* sin(theta)^12)

@@ -22,14 +22,14 @@ cubs <- function(N = 30,
   var_names <- c('phi','theta','weight')
   
   if(cubature == "lebedev"){
-    data(lebedev_table)
+    data(lebedev)
     if(N > max(lebedev_table$N)) w <- nrow(lebedev_table) else
     w <- min(which(lebedev_table$N >= N))
     return(setNames(lebedev[[w]], var_names))
   }
   
   if(cubature == "sphericaldesigns"){
-    data(sphericaldesigns_table)
+    data(sphericaldesigns)
     if(N > max(sphericaldesigns_table$N)) w <- nrow(sphericaldesigns_table) else
       w <- min(which(sphericaldesigns_table$N >= N))
     return(setNames(data.frame(sphericaldesigns[[w]]), var_names))

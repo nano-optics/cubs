@@ -22,6 +22,9 @@
     <loc>/index.html</loc>
   </url>
   <url>
+    <loc>/reference/cubature_table.html</loc>
+  </url>
+  <url>
     <loc>/reference/cubs-package.html</loc>
   </url>
   <url>
@@ -56,5 +59,8 @@
   </url>
   <url>
     <loc>/reference/sphericaldesigns_table.html</loc>
+  </url>
+  <url>
+    <loc>/reference/valid.html</loc>
   </url>
 </urlset>
