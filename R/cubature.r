@@ -8,7 +8,7 @@
 ##' Numerical integration points for angular averaging
 ##' @title cubature_sphere
 ##' @param N number of integration points
-##' @param cubature cubature method, using either Gauss Legendre cubature (default), Quasi Monte Carlo, regular grid, or "cheap" (3 axes)
+##' @param cubature method: one of 'lebedev', 'sphericaldesigns', 'gl', 'fibonacci', 'grid', 'qmc', 'random'
 ##' @importFrom randtoolbox halton
 ##' @importFrom statmod gauss.quad
 ##' @export

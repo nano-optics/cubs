@@ -13,7 +13,7 @@ cubs(
 \arguments{
 \item{N}{number of integration points}
 
-\item{cubature}{cubature method, using either Gauss Legendre cubature (default), Quasi Monte Carlo, regular grid, or "cheap" (3 axes)}
+\item{cubature}{method: one of 'lebedev', 'sphericaldesigns', 'gl', 'fibonacci', 'grid', 'qmc', 'random'}
 }
 \description{
 cubature points on a sphere
